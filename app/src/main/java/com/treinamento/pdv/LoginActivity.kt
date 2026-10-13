@@ -11,35 +11,35 @@ import com.treinamento.pdv.databinding.ActivityLoginBinding
 import kotlinx.coroutines.launch
 
 class LoginActivity : TelaBase() {
-
-    private lateinit var b: ActivityLoginBinding
+    //classe que reutilizavel para bindar.
+    private lateinit var binding: ActivityLoginBinding
 
     // Roda quando a tela abre
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-//        // Se já existe um crachá guardado, pula o login
-//        if (Sessao.token != null) {
-//            abrirMenu()
-//            return
-//        }
+        // Se já existe um crachá guardado, pula o login
+        if (Sessao.token != null) {
+            abrirMenu()
+            return
+        }
 
         // Liga este arquivo ao desenho activity_login.xml
-        b = ActivityLoginBinding.inflate(layoutInflater)
-        setContentView(b.root)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        b.servidor.setText(Sessao.servidor)
+        binding.servidor.setText(Sessao.servidor)
 
         // Quando tocarem no botão, rode a função entrar()
-        b.entrar.setOnClickListener {
+        binding.entrar.setOnClickListener {
             entrar()
         }
     }
 
     private fun entrar() {
         // 1. Lê o que foi digitado
-        val email = b.email.text.toString().trim()
-        val senha = b.senha.text.toString()
+        val email = binding.email.text.toString().trim()
+        val senha = binding.senha.text.toString()
 
         // 2. Confere se está preenchido
         if (email.isEmpty() || senha.isEmpty()) {
@@ -48,11 +48,11 @@ class LoginActivity : TelaBase() {
         }
 
         // 3. Guarda o endereço da API digitado
-        Sessao.servidor = b.servidor.text.toString()
+        Sessao.servidor = binding.servidor.text.toString()
 
         // 4. Mostra a rodinha e trava o botão
-        b.progresso.visibility = View.VISIBLE
-        b.entrar.isEnabled = false
+        binding.progresso.visibility = View.VISIBLE
+        binding.entrar.isEnabled = false
 
         // 5. Faz o pedido à API, em segundo plano
         lifecycleScope.launch {
@@ -68,8 +68,8 @@ class LoginActivity : TelaBase() {
                 mostrarErro(e)
             }
             // 6. Esconde a rodinha e libera o botão
-            b.progresso.visibility = View.GONE
-            b.entrar.isEnabled = true
+            binding.progresso.visibility = View.GONE
+            binding.entrar.isEnabled = true
         }
     }
 

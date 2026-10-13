@@ -56,8 +56,8 @@ open class TelaBase : AppCompatActivity() {
             try {
                 val corpo = erro.response()?.errorBody()?.string()
                 val erroApi = Gson().fromJson(corpo, ErroApi::class.java)
-                if (erroApi != null && erroApi.erro != null) {
-                    return erroApi.erro
+                if (erroApi != null && erroApi.error != null) {
+                    return erroApi.error
                 }
             } catch (e: Exception) {
                 // não conseguiu ler a mensagem: usa as frases abaixo

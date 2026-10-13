@@ -5,13 +5,16 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
 
-// 25.9 vira "R$ 25,90"
+// 27.9 vira "R$ 27,90"
 fun moeda(valor: Double): String {
     return "R$ " + String.format(Locale("pt", "BR"), "%,.2f", valor)
 }
 
-// A data chega da API assim: "2026-10-09T23:15:00.000Z". Vira "09/10/2026 20:15".
-fun dataHora(textoDaApi: String): String {
+// A data chega da API assim: "2026-10-13T12:34:54.004Z". Vira "13/10/2026 09:34".
+fun dataHora(textoDaApi: String?): String {
+    if (textoDaApi == null) {
+        return ""
+    }
     try {
         val leitor = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
         leitor.timeZone = TimeZone.getTimeZone("UTC")
@@ -29,19 +32,24 @@ fun dataHora(textoDaApi: String): String {
 fun recibo(venda: Venda): String {
     var texto = "PDV TREINAMENTO\n\n"
     texto += "Venda: #${venda.id}\n"
-    texto += "Data: ${dataHora(venda.data)}\n\n"
+    texto += "Data: ${dataHora(venda.data_venda)}\n\n"
 
-    val itens = venda.itens
+    val itens = venda.itens_vendas
     if (itens != null) {
         for (item in itens) {
-            val nome = item.mercadoria?.descricao ?: "Mercadoria ${item.mercadoriaId}"
+            val nome = item.mercadorium?.descricao ?: "Mercadoria ${item.mercadoria_id}"
             texto += nome + "\n"
-            texto += "${item.quantidade} x ${moeda(item.precoUnitario)}\n\n"
+            texto += "${item.quantidade} x ${moeda(item.preco_unitario)}\n\n"
         }
     }
 
     texto += "--------------------\n"
-    texto += "TOTAL: ${moeda(venda.valorTotal)}\n"
+    texto += "TOTAL: ${moeda(venda.valor_total)}\n"
+
+    val forma = venda.forma_pag
+    if (forma != null) {
+        texto += "Pagamento: $forma\n"
+    }
 
     val cliente = venda.cliente
     if (cliente != null) {

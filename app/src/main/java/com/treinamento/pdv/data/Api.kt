@@ -1,92 +1,82 @@
 package com.treinamento.pdv.data
 
-import com.google.gson.annotations.SerializedName
+import okhttp3.OkHttpClient
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Path
+import retrofit2.http.Query
+import java.util.concurrent.TimeUnit
 
-data class LoginRequest(
-    val email: String,
-    val senha: String
-)
-data class Usuario(
-    val id: Int,
-    val nome: String
-)
-data class LoginResponse(
-    val token: String,
-    val usuario: Usuario
-)
+// O CARDÁPIO: cada função é um pedido que o app pode fazer à sua API.
+interface ApiService {
 
-// ----- Mercadorias -----
-data class Mercadoria(
-    val id: Int,
-    val codigo: String,
-    val descricao: String,
-    val preco: Double,    
-    val estoque: Int,
-    val ativo: Boolean
-)
+    @POST("auth/login")
+    suspend fun login(@Body dados: LoginRequest): LoginResponse
 
-// O que o app ENVIA para cadastrar ou alterar uma mercadoria
-data class MercadoriaBody(
-    val codigo: String,
-    val descricao: String,
-    val preco: Double,
-    val estoque: Int
-)
+    // ----- Mercadorias -----
+    @GET("mercadorias")
+    suspend fun mercadorias(@Query("busca") busca: String): List<Mercadoria>
 
-// ----- Clientes -----
-data class Cliente(
-    val id: Int,
-    val nome: String,
-    @SerializedName("cpf_cnpj") val cpfCnpj: String?,
-    val telefone: String?,
-    val email: String?
-)
+    @POST("mercadorias")
+    suspend fun criarMercadoria(@Body dados: MercadoriaBody): Mercadoria
 
-// O que o app ENVIA para cadastrar ou alterar um cliente
-data class ClienteBody(
-    val nome: String,
-    @SerializedName("cpf_cnpj") val cpfCnpj: String,
-    val telefone: String,
-    val email: String
-)
+    @PUT("mercadorias/{id}")
+    suspend fun alterarMercadoria(@Path("id") id: Int, @Body dados: MercadoriaBody): Mercadoria
 
-// ----- Vendas -----
-data class ItemVenda(
-    val id: Int,
-    @SerializedName("mercadoria_id") val mercadoriaId: Int,
-    val quantidade: Int,
-    @SerializedName("preco_unitario") val precoUnitario: Double,
-    @SerializedName("valor_total") val valorTotal: Double,
-    @SerializedName("mercadorium") val mercadoria: Mercadoria?
-)
+    @PUT("mercadorias/{id}")
+    suspend fun mudarAtivoMercadoria(@Path("id") id: Int, @Body dados: AtivoBody): Mercadoria
 
-data class Venda(
-    val id: Int,
-    @SerializedName("valor_total") val valorTotal: Double,
-    @SerializedName("data_venda") val data: String,
-    val status: String,
-    val cliente: Cliente?,
-    val usuario: Usuario?,
-    @SerializedName("itens_vendas") val itens: List<ItemVenda>?
-)
+    // ----- Clientes -----
+    @GET("clientes")
+    suspend fun clientes(@Query("busca") busca: String): List<Cliente>
 
-// O que o app ENVIA para finalizar uma venda
-data class ItemVendaBody(
-    @SerializedName("mercadoria_id") val mercadoriaId: Int,
-    val quantidade: Int
-)
-data class VendaBody(
-    @SerializedName("cliente_id") val clienteId: Int?,
-    val itens: List<ItemVendaBody>
-)
+    @POST("clientes")
+    suspend fun criarCliente(@Body dados: ClienteBody): Cliente
 
-// Um item da venda que ainda está sendo montada na tela
-data class ItemCarrinho(
-    val mercadoria: Mercadoria,
-    var quantidade: Int
-)
+    @PUT("clientes/{id}")
+    suspend fun alterarCliente(@Path("id") id: Int, @Body dados: ClienteBody): Cliente
 
-// Quando algo dá errado, a API responde { "error": "mensagem" }
-data class ErroApi(
-    @SerializedName("error") val erro: String?
-)
+    @PUT("clientes/{id}")
+    suspend fun mudarAtivoCliente(@Path("id") id: Int, @Body dados: AtivoBody): Cliente
+
+    // ----- Vendas -----
+    @POST("vendas")
+    suspend fun criarVenda(@Body dados: VendaBody): Venda
+
+    @GET("vendas")
+    suspend fun vendas(): List<Venda>
+
+    @GET("vendas/{id}")
+    suspend fun venda(@Path("id") id: Int): Venda
+}
+
+// O GARÇOM: leva o pedido até a API e traz a resposta.
+object Api {
+
+    private val http = OkHttpClient.Builder()
+        .connectTimeout(8, TimeUnit.SECONDS)
+        .readTimeout(15, TimeUnit.SECONDS)
+        .addInterceptor { cadeia ->
+            // Antes de cada pedido, mostra o crachá (se houver)
+            val pedido = cadeia.request().newBuilder()
+            val token = Sessao.token
+            if (token != null) {
+                pedido.header("Authorization", "Bearer " + token)
+            }
+            cadeia.proceed(pedido.build())
+        }
+        .build()
+
+    fun servico(): ApiService {
+        return Retrofit.Builder()
+            .baseUrl(Sessao.servidor)
+            .client(http)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(ApiService::class.java)
+    }
+}

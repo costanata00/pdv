@@ -23,7 +23,7 @@ object Sessao {
 
     // Endereço da API. O valor inicial serve para o emulador.
     var servidor: String
-        get() = gaveta.getString("servidor", null) ?: "http://10.0.2.2:3000/"
+        get() = gaveta.getString("servidor", null) ?: "http://127.0.0.1:3000/"
         set(valor) {
             var endereco = valor.trim()
             if (!endereco.startsWith("http")) { endereco = "http://" +
