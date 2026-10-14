@@ -51,7 +51,7 @@ data class ItemVenda(
     val quantidade: Int,
     val preco_unitario: Double,
     val valor_total: Double,
-    val mercadorium: Mercadoria?   // é assim mesmo que a sua API chama a mercadoria do item
+    val mercadorium: Mercadoria?
 )
 
 data class Venda(

@@ -9,21 +9,19 @@ class MainActivity : TelaBase() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Na primeira vez que a moldura abre, coloca o menu dentro dela
+        //default é tela de menu
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.moldura, MenuFragment())
                 .commit()
         }
-
-        // Toda vez que a pilha de telas muda, decide se mostra a seta de voltar
         supportFragmentManager.addOnBackStackChangedListener {
             atualizarSeta()
         }
         atualizarSeta()
     }
 
-    // Coloca um fragment novo na moldura. O anterior vai para a pilha.
+    // Coloca um fragment novo no topo da pilha
     fun abrir(tela: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.moldura, tela)
@@ -31,13 +29,11 @@ class MainActivity : TelaBase() {
             .commit()
     }
 
-    // A seta só aparece quando existe uma tela para onde voltar
     private fun atualizarSeta() {
         val temParaOndeVoltar = supportFragmentManager.backStackEntryCount > 0
         supportActionBar?.setDisplayHomeAsUpEnabled(temParaOndeVoltar)
     }
 
-    // Tocar na seta = voltar para o fragment anterior
     override fun onSupportNavigateUp(): Boolean {
         supportFragmentManager.popBackStack()
         return true

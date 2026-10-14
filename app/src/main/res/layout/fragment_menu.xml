@@ -15,9 +15,9 @@
     <Button
         android:id="@+id/novaVenda"
         android:layout_width="match_parent"
-        android:layout_height="72dp"
+        android:layout_height="60dp"
         android:text="Nova venda"
-        android:textSize="18sp" />
+        />
 
     <Button
         android:id="@+id/mercadorias"
@@ -40,10 +40,15 @@
         android:layout_marginTop="12dp"
         android:text="Histórico de vendas" />
 
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
     <Button
         android:id="@+id/sair"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:backgroundTint="#FF4B33"
         android:text="Sair" />
 </LinearLayout>

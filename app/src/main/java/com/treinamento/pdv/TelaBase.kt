@@ -12,8 +12,6 @@ import retrofit2.HttpException
 import java.io.IOException
 
 open class TelaBase : AppCompatActivity() {
-
-    // Faz a seta de voltar, no topo da tela, fechar a tela
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return true
@@ -25,7 +23,6 @@ open class TelaBase : AppCompatActivity() {
         Toast.makeText(this, texto, Toast.LENGTH_SHORT).show()
     }
 
-    // Mostra um erro em uma janelinha com botão OK
     fun mostrarErro(erro: Exception) {
         // A tela foi fechada no meio do pedido. Não é um erro de verdade.
         if (erro is CancellationException) {
@@ -49,9 +46,8 @@ open class TelaBase : AppCompatActivity() {
             .show()
     }
 
-    // Transforma o erro em uma frase que o usuário entende
     private fun textoDoErro(erro: Exception): String {
-        // A API respondeu, mas com erro. Ex.: "E-mail ou senha inválidos"
+        //A api respondeu um erro
         if (erro is HttpException) {
             try {
                 val corpo = erro.response()?.errorBody()?.string()
@@ -67,16 +63,13 @@ open class TelaBase : AppCompatActivity() {
             }
             return "A API respondeu com o erro ${erro.code()}."
         }
-
-        // A API nem respondeu: sem rede, API desligada ou endereço errado
+        // erro de saida ou entrada da api
         if (erro is IOException) {
             return "Não foi possível conectar à API.\n\nConfira se a API está ligada e se o endereço está certo:\n${Sessao.servidor}"
         }
-
         if (erro is IllegalArgumentException) {
             return "O endereço da API parece inválido:\n${Sessao.servidor}"
         }
-
         return "Erro inesperado: ${erro.message}"
     }
 }

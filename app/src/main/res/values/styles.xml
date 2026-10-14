@@ -1,7 +1,10 @@
 <resources>
-
     <style name="Widget.Theme.Pdv.ButtonBar.Fullscreen" parent="">
         <item name="android:background">@color/black_overlay</item>
         <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
+    </style>
+
+    <style name="Widget.Pdv.Button" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/botao_fundo</item>
     </style>
 </resources>

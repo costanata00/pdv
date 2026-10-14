@@ -54,14 +54,13 @@ interface ApiService {
     suspend fun venda(@Path("id") id: Int): Venda
 }
 
-// O GARÇOM: leva o pedido até a API e traz a resposta.
 object Api {
 
     private val http = OkHttpClient.Builder()
         .connectTimeout(8, TimeUnit.SECONDS)
         .readTimeout(15, TimeUnit.SECONDS)
         .addInterceptor { cadeia ->
-            // Antes de cada pedido, mostra o crachá (se houver)
+            // Antes de cada pedido, mostra o token
             val pedido = cadeia.request().newBuilder()
             val token = Sessao.token
             if (token != null) {
