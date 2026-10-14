@@ -46,7 +46,8 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="24dp"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:text="Nada foi encontrado" />
 
     <ListView
         android:id="@+id/lista"
