@@ -54,5 +54,5 @@
         android:id="@+id/prosseguir"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Prosseguir" />
+        android:text="Subtotal: R$ 00,00" />
 </LinearLayout>

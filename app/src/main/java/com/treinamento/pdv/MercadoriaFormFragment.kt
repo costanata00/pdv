@@ -55,7 +55,7 @@ class MercadoriaFormFragment : FragmentBase() {
     private fun preencherCampos(m: Mercadoria) {
         b.codigo.setText(m.codigo)
         b.descricao.setText(m.descricao)
-        b.preco.setText(m.preco.toString())
+        b.preco.setText(moeda(m.preco).replace("R$", "").trim().toString())
         b.estoque.setText(m.estoque.toString())
 
         b.ativar.visibility = View.VISIBLE

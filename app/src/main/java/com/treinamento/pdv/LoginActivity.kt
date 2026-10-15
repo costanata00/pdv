@@ -45,7 +45,6 @@ class LoginActivity : TelaBase() {
         binding.progresso.visibility = View.VISIBLE
         binding.entrar.isEnabled = false
 
-        // chamada a api
         lifecycleScope.launch {
             try {
                 //           cria a conexão-----------cria objeto pro body e usa rota login
@@ -63,6 +62,6 @@ class LoginActivity : TelaBase() {
 
     private fun abrirMenu() {
         startActivity(Intent(this, MainActivity::class.java))
-        finish()   // fecha o login, para o botão voltar não retornar a ele
+        finish()
     }
 }

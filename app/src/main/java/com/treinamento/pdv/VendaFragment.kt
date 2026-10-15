@@ -1,12 +1,18 @@
 package com.treinamento.pdv
 
 import android.os.Bundle
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
+import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
+import com.google.gson.Gson
 import com.treinamento.pdv.data.Api
+import com.treinamento.pdv.data.Cliente
 import com.treinamento.pdv.data.ItemCarrinho
 import com.treinamento.pdv.data.Mercadoria
 import com.treinamento.pdv.databinding.FragmentVendaBinding
@@ -19,7 +25,7 @@ class VendaFragment : FragmentBase() {
     private val b get() = _b!!
 
     private var mercadorias: List<Mercadoria> = ArrayList()
-    private var clienteId: Int? = null
+    private var clientes: List<Cliente> = ArrayList()
     private var itensCarrinho: MutableList<ItemCarrinho> = ArrayList()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -33,6 +39,15 @@ class VendaFragment : FragmentBase() {
 
         b.buscar.setOnClickListener {
             carregar()
+        }
+        b.prosseguir.setOnClickListener {
+            if (itensCarrinho.isEmpty()) {
+                aviso("Adicione pelo menos um item ao carrinho.")
+                return@setOnClickListener
+            }
+            val tela = ClienteListaFragment()
+            tela.arguments = bundleOf("carrinho" to Gson().toJson(itensCarrinho))
+            abrir(tela)
         }
     }
 
@@ -62,19 +77,78 @@ class VendaFragment : FragmentBase() {
         }
     }
 
-    private fun adicionar(m: Mercadoria) {
+    private fun perguntarQuantidade(m: Mercadoria) {
+        val campo = EditText(requireContext())
+        campo.inputType = InputType.TYPE_CLASS_NUMBER
+        campo.setText("1")
+        campo.selectAll()
         val existente = itensCarrinho.find { it.mercadoria.id == m.id }
-        if (existente != null) {
-            existente.quantidade++
-        } else {
-            itensCarrinho.add(ItemCarrinho(m, 1))
+        val quantidade = existente?.quantidade ?: 0
+
+
+        val dialogo = AlertDialog.Builder(requireContext())
+            .setTitle(m.descricao)
+            .setMessage("Quantidade\n No carrinho: $quantidade")
+            .setView(campo)
+            .setPositiveButton("Adicionar", null)
+            .setNegativeButton("Cancelar", null)
+            .create()
+
+        dialogo.setOnShowListener {
+            dialogo.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                val quantidade = campo.text.toString().toIntOrNull()
+                if (quantidade == null || quantidade <= 0) {
+                    campo.error = "Informe uma quantidade válida"
+                } else {
+                    adicionar(m, quantidade)
+                    dialogo.dismiss()
+                }
+            }
         }
-        val quantidade = existente?.quantidade ?: 1
-        aviso("${m.descricao} adicionado ($quantidade)")
+        dialogo.show()
     }
 
-    private inner class MercadoriaAdapter :
-        ArrayAdapter<Mercadoria>(requireContext(), 0, mercadorias) {
+    private fun adicionar(m: Mercadoria, quantidade: Int) {
+        val existente = itensCarrinho.find { it.mercadoria.id == m.id }
+        if (existente != null) {
+            if ((existente.quantidade + quantidade) > m.estoque) {
+                aviso("Quantidade indisponível")
+                return
+            } else {
+                existente.quantidade += quantidade
+            }
+        } else {
+            if (quantidade > m.estoque) {
+                aviso("Quantidade indisponível")
+                return
+            } else {
+                itensCarrinho.add(ItemCarrinho(m, quantidade))
+            }
+        }
+        val total = existente?.quantidade ?: quantidade
+        aviso("${m.descricao} adicionado ($total)")
+        b.prosseguir.text = "Subtotal: ${moeda(calcularTotalCarrinho())}"
+    }
+
+    private fun calcularTotalCarrinho(): Double {
+        var total = 0.0
+        for (item in itensCarrinho) {
+            total += item.mercadoria.preco * item.quantidade
+        }
+        return total
+    }
+
+    override fun onResume() {
+        super.onResume()
+        carregar()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _b = null
+    }
+
+    private inner class MercadoriaAdapter : ArrayAdapter<Mercadoria>(requireContext(), 0, mercadorias) {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val item = if (convertView == null) {
@@ -88,19 +162,11 @@ class VendaFragment : FragmentBase() {
             item.precoItem.text = moeda(m.preco)
             item.estoqueItem.text = "Estoque: ${m.estoque}"
             item.botaoItem.setOnClickListener {
-                adicionar(m)
+                perguntarQuantidade(m)
             }
             return item.root
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        carregar()
-    }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _b = null
-    }
 }

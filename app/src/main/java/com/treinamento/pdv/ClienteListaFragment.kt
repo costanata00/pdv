@@ -11,12 +11,15 @@ import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
 import com.treinamento.pdv.data.Api
 import com.treinamento.pdv.data.Cliente
+import com.treinamento.pdv.data.ItemCarrinho
 import com.treinamento.pdv.data.Mercadoria
 import com.treinamento.pdv.data.Sessao
 import com.treinamento.pdv.databinding.FragmentListaBinding
 import kotlinx.coroutines.launch
+import kotlin.text.get
 
 class ClienteListaFragment : FragmentBase() {
+    private var carrinho: List<ItemCarrinho>? = null
     private var filtro = "ativas";
     private var clientes: List<Cliente> = ArrayList()
 
@@ -56,12 +59,25 @@ class ClienteListaFragment : FragmentBase() {
                 mostrarLista()
             }
         }
-        b.lista.setOnItemClickListener { _, _, posicao, _ ->
-            val escolhida = clientes[posicao]
-            val tela = ClienteFormFragment()
-            tela.arguments = bundleOf("cliente" to Gson().toJson(escolhida))
-            abrir(tela)
+
+        val json = arguments?.getString("carrinho")
+        if (json != null) {
+            carrinho = Gson().fromJson(json, Array<ItemCarrinho>::class.java).toList()
+            b.filtro.visibility = View.GONE
+            val tela = CheckoutFragment()
+            b.lista.setOnItemClickListener { _, _, posicao, _ ->
+                tela.arguments = bundleOf(
+                    "carrinho" to json, "cliente" to Gson().toJson(clientes[posicao])
+                )
+                abrir(tela)
+            }
+            b.novo.text = "Prosseguir sem cliente"
+            b.novo.setOnClickListener {
+                tela.arguments = bundleOf("carrinho" to json)
+                abrir(tela)
+            }
         }
+
 
     }
 
@@ -118,3 +134,8 @@ class ClienteListaFragment : FragmentBase() {
 
 
 }
+
+
+
+
+

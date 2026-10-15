@@ -56,7 +56,7 @@ class MercadoriaListaFragment : FragmentBase() {
         b.lista.setOnItemClickListener { _, _, posicao, _ ->
             val escolhida = mercadorias[posicao]
             val tela = MercadoriaFormFragment()
-            tela.arguments = bundleOf("mercadoria" to Gson().toJson(escolhida))
+            tela.arguments = bundleOf()
             abrir(tela)
         }
     }

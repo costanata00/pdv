@@ -36,7 +36,7 @@
 
     <Button
         android:id="@+id/botaoItem"
-        android:layout_width="50dp"
+        android:layout_width="59dp"
         android:layout_height="wrap_content"
         android:text="+" />
 
