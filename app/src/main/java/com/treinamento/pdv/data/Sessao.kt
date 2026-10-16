@@ -4,14 +4,13 @@ import android.content.SharedPreferences
 
 
 object Sessao {
-    // "Gaveta" do celular onde os valores ficam salvos, mesmo fechando o app
     private lateinit var gaveta: SharedPreferences
     fun iniciar(contexto: Context) {
         gaveta = contexto.getSharedPreferences("sessao", Context.MODE_PRIVATE)
     }
 
 
-    // O crachá do login. null = ninguém logado.
+    // o token + o usuario logado
     var token: String?
         get() = gaveta.getString("token", null)
         set(valor) { gaveta.edit().putString("token", valor).apply() }
@@ -19,9 +18,11 @@ object Sessao {
         get() = gaveta.getString("nome", "")
         set(valor) { gaveta.edit().putString("nome", valor).apply() }
 
+    var linkPFP: String?
+        get() = gaveta.getString("imgPFP", "")
+        set(valor) { gaveta.edit().putString("imgPFP", valor).apply() }
 
-
-    // Endereço da API. O valor inicial serve para o emulador.
+    //o servidor salvo no login
     var servidor: String
         get() = gaveta.getString("servidor", null) ?: "http://127.0.0.1:3000/"
         set(valor) {

@@ -15,7 +15,6 @@ open class TelaBase : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return true
-
     }
 
     fun aviso(texto: String) {

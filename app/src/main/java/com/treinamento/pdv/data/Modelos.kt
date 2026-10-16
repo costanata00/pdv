@@ -1,11 +1,11 @@
 package com.treinamento.pdv.data
 
-// ----- Login -----
+//Login
 data class LoginRequest(val email: String, val senha: String)
 data class Usuario(val id: Int, val nome: String)
 data class LoginResponse(val token: String, val usuario: Usuario)
 
-// ----- Mercadorias -----
+//Mercadorias
 data class Mercadoria(
     val id: Int,
     val codigo: String,
@@ -15,7 +15,6 @@ data class Mercadoria(
     val ativo: Boolean
 )
 
-// O que o app ENVIA para cadastrar ou alterar uma mercadoria
 data class MercadoriaBody(
     val codigo: String,
     val descricao: String,
@@ -23,7 +22,7 @@ data class MercadoriaBody(
     val estoque: Int
 )
 
-// ----- Clientes -----
+//Clientes
 data class Cliente(
     val id: Int,
     val nome: String,
@@ -33,7 +32,6 @@ data class Cliente(
     val ativo: Boolean
 )
 
-// O que o app ENVIA para cadastrar ou alterar um cliente
 data class ClienteBody(
     val nome: String,
     val cpf_cnpj: String,
@@ -41,7 +39,6 @@ data class ClienteBody(
     val email: String
 )
 
-// Usado para desativar ou reativar uma mercadoria ou um cliente
 data class AtivoBody(val ativo: Boolean)
 
 // ----- Vendas -----
@@ -67,7 +64,6 @@ data class Venda(
     val itens_vendas: List<ItemVenda>?
 )
 
-// O que o app ENVIA para finalizar uma venda
 data class ItemVendaBody(val mercadoria_id: Int, val quantidade: Int)
 
 data class VendaBody(
@@ -77,7 +73,7 @@ data class VendaBody(
     val itens: List<ItemVendaBody>
 )
 
-// Um item da venda que ainda está sendo montada na tela
+//diferente do Itemvendabody pq ele tem a mercadoria inteira.
 data class ItemCarrinho(val mercadoria: Mercadoria, var quantidade: Int)
 
 data class ErroApi(val error: String?)

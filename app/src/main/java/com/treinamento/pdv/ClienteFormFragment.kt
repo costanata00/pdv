@@ -103,9 +103,9 @@ class ClienteFormFragment : FragmentBase() {
     }
 
     private fun confirmarMudancaAtivo() {
-        val m = cliente ?: return
+        val c = cliente ?: return
 
-        val pergunta = if (m.ativo) {
+        val pergunta = if (c.ativo) {
             "Desativar este cliente? Ele não poderá mais comprar."
         } else {
             "Reativar este cliente?"
@@ -114,7 +114,7 @@ class ClienteFormFragment : FragmentBase() {
         AlertDialog.Builder(requireContext())
             .setMessage(pergunta)
             .setNegativeButton("Cancelar", null)
-            .setPositiveButton("Confirmar") { _, _ -> mudarAtivo(m.id, !m.ativo) }
+            .setPositiveButton("Confirmar") { _, _ -> mudarAtivo(c.id, !c.ativo) }
             .show()
     }
     private fun mudarAtivo(id: Int, ativo: Boolean) {

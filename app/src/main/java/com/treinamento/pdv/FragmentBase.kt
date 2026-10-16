@@ -8,7 +8,6 @@ open class FragmentBase : Fragment() {
         (requireActivity() as TelaBase).aviso(texto)
     }
 
-    // Janela de erro (usa a mesma da TelaBase)
     fun mostrarErro(erro: Exception) {
         // A tela foi fechada no meio do pedido. Não é um erro de verdade.
         if (erro is CancellationException) {
@@ -17,11 +16,12 @@ open class FragmentBase : Fragment() {
         (requireActivity() as TelaBase).mostrarErro(erro)
     }
 
+    //puxando o abrir da tela base
     fun abrir(tela: Fragment) {
         (requireActivity() as MainActivity).abrir(tela)
     }
 
-    fun voltar() {
+    open fun voltar() {
         parentFragmentManager.popBackStack()
     }
     fun titulo(texto: String) {

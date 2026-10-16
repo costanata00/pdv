@@ -5,10 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
 import com.treinamento.pdv.data.Api
+import com.treinamento.pdv.data.AtivoBody
 import com.treinamento.pdv.data.Mercadoria
 import com.treinamento.pdv.databinding.FragmentListaBinding
 import kotlinx.coroutines.launch
@@ -41,24 +43,52 @@ class MercadoriaListaFragment : FragmentBase() {
             if (filtro == "todas") {
                 filtro = "ativas"
                 b.filtro.text = "Ativas"
-                carregar()
             }else if (filtro == "ativas"){
                 filtro = "inativas"
                 b.filtro.text = "Inativas"
-                carregar()
             }else{
                 filtro = "todas"
                 b.filtro.text = "Todas"
-                carregar()
             }
+            carregar()
         }
 
         b.lista.setOnItemClickListener { _, _, posicao, _ ->
             val escolhida = mercadorias[posicao]
             val tela = MercadoriaFormFragment()
-            tela.arguments = bundleOf()
+            tela.arguments = bundleOf("mercadoria" to Gson().toJson(escolhida))
             abrir(tela)
         }
+
+        b.lista.setOnItemLongClickListener { _, _, posicao, _ ->
+            val m = mercadorias[posicao]
+            val texto = if (m.ativo) "Desativar" else "Ativar"
+            val texto2 = if (m.ativo) "Desativado" else "Ativado"
+            AlertDialog.Builder(requireContext())
+                .setPositiveButton(texto) { _, _ ->
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        try {
+                            Api.servico().mudarAtivoCliente(m.id, AtivoBody(!m.ativo))
+                            aviso(texto2)
+                            carregar()
+                        } catch (e: Exception) {
+                            mostrarErro(e)
+                        }
+                    }
+                }
+                .setNegativeButton( "Editar") { _, _ ->
+                    val tela = MercadoriaFormFragment()
+                    tela.arguments = bundleOf("mercadoria" to Gson().toJson(mercadorias[posicao]))
+                    abrir(tela)
+                }
+                .setNeutralButton("Sair", null)
+                .create()
+                .show()
+            true
+        }
+
+
+
     }
 
     override fun onResume() {

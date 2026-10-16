@@ -37,6 +37,9 @@ class VendaFragment : FragmentBase() {
         super.onViewCreated(view, savedInstanceState)
         titulo("Venda")
 
+        b.prosseguir.text = "Subtotal: ${moeda(calcularTotalCarrinho())}"
+
+
         b.buscar.setOnClickListener {
             carregar()
         }
@@ -108,7 +111,7 @@ class VendaFragment : FragmentBase() {
         dialogo.show()
     }
 
-    private fun adicionar(m: Mercadoria, quantidade: Int) {
+    private fun adicionar(m: Mercadoria, quantidade: Int){
         val existente = itensCarrinho.find { it.mercadoria.id == m.id }
         if (existente != null) {
             if ((existente.quantidade + quantidade) > m.estoque) {
@@ -125,9 +128,13 @@ class VendaFragment : FragmentBase() {
                 itensCarrinho.add(ItemCarrinho(m, quantidade))
             }
         }
+        val depois = itensCarrinho.find { it.mercadoria.id == m.id }
+
         val total = existente?.quantidade ?: quantidade
         aviso("${m.descricao} adicionado ($total)")
         b.prosseguir.text = "Subtotal: ${moeda(calcularTotalCarrinho())}"
+
+
     }
 
     private fun calcularTotalCarrinho(): Double {
@@ -146,6 +153,17 @@ class VendaFragment : FragmentBase() {
     override fun onDestroyView() {
         super.onDestroyView()
         _b = null
+    }
+
+    override fun voltar() {
+        AlertDialog.Builder(requireContext())
+            .setMessage("Tem certeza que quer voltar?\nOs itens que você tiver adicionado serão perdidos.")
+            .setPositiveButton("Sim") { _, _ ->
+                super.voltar()
+            }
+            .setNegativeButton("Não", null)
+            .create()
+            .show()
     }
 
     private inner class MercadoriaAdapter : ArrayAdapter<Mercadoria>(requireContext(), 0, mercadorias) {

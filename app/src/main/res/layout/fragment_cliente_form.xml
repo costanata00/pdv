@@ -4,18 +4,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp">
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="Nome Completo:" />
-
-    <EditText
-        android:id="@+id/codigo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Código (ex.: P009)"
-        android:inputType="textCapCharacters" />
 
     <TextView
         android:layout_width="match_parent"

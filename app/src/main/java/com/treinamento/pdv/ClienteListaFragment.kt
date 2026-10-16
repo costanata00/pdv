@@ -6,10 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
 import com.treinamento.pdv.data.Api
+import com.treinamento.pdv.data.AtivoBody
 import com.treinamento.pdv.data.Cliente
 import com.treinamento.pdv.data.ItemCarrinho
 import com.treinamento.pdv.data.Mercadoria
@@ -48,17 +50,54 @@ class ClienteListaFragment : FragmentBase() {
             if (filtro == "todas") {
                 filtro = "ativas"
                 b.filtro.text = "Ativas"
-                mostrarLista()
             }else if (filtro == "ativas"){
                 filtro = "inativas"
                 b.filtro.text = "Inativas"
-                mostrarLista()
             }else{
                 filtro = "todas"
                 b.filtro.text = "Todas"
-                mostrarLista()
             }
+            carregar()
         }
+
+        b.lista.setOnItemClickListener { _, _, posicao, _ ->
+            val tela = ClienteFormFragment()
+            tela.arguments = bundleOf("cliente" to Gson().toJson(clientes[posicao]))
+            abrir(tela)
+        }
+
+        b.lista.setOnItemLongClickListener { _, _, posicao, _ ->
+            val c = clientes[posicao]
+            val texto = if (c.ativo) "Desativar" else "Ativar"
+            val texto2 = if (c.ativo) "Desativado" else "Ativado"
+            AlertDialog.Builder(requireContext())
+                .setPositiveButton(texto) { _, _ ->
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        try {
+                            Api.servico().mudarAtivoCliente(c.id, AtivoBody(!c.ativo))
+                            aviso(texto2)
+                            carregar()
+                        } catch (e: Exception) {
+                            mostrarErro(e)
+                        }
+                    }
+                }
+                .setNegativeButton( "Editar") { _, _ ->
+                    val tela = ClienteFormFragment()
+                    tela.arguments = bundleOf("cliente" to Gson().toJson(clientes[posicao]))
+                    abrir(tela)
+                }
+                .setNeutralButton("Sair", null)
+                .create()
+                .show()
+            true
+        }
+
+        b.buscar.setOnLongClickListener { view ->
+
+            true
+        }
+
 
         val json = arguments?.getString("carrinho")
         if (json != null) {

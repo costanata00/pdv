@@ -9,9 +9,12 @@ import android.widget.ArrayAdapter
 import android.widget.RadioGroup
 import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
+import com.treinamento.pdv.data.Api
 import com.treinamento.pdv.data.Cliente
 import com.treinamento.pdv.data.ItemCarrinho
+import com.treinamento.pdv.data.ItemVendaBody
 import com.treinamento.pdv.data.Sessao
+import com.treinamento.pdv.data.VendaBody
 import com.treinamento.pdv.databinding.FragmentCheckoutBinding
 import kotlinx.coroutines.launch
 
@@ -40,16 +43,12 @@ class CheckoutFragment : FragmentBase() {
             carrinho = Gson().fromJson(jsonCarrinho, Array<ItemCarrinho>::class.java).toList()
         }
         mostrarLista()
-        val rg = view.findViewById<RadioGroup>(R.id.rgPagamento)
-        var pagamento = when (rg.checkedRadioButtonId) {
-            R.id.rbDinheiro -> "Dinheiro"
-            R.id.rbCredito -> "Cartão"
-            R.id.rbPix -> "PIX"
-            else -> "Dinheiro"
+        b.novo.setOnClickListener {
+            finalizarVenda()
         }
 
     }
-    fun mostrarLista() {
+    private fun mostrarLista() {
         val itens = carrinho ?: emptyList()
         val linhas = ArrayList<String>()
         var total = 0.0
@@ -65,21 +64,41 @@ class CheckoutFragment : FragmentBase() {
         b.cliente.text = cliente?.nome ?: "Cliente não selecionado"
 
     }
+    private fun finalizarVenda(){
+        b.progresso.visibility = View.VISIBLE
+        val rg = view?.findViewById<RadioGroup>(R.id.rgPagamento) ?: return
+        var pagamento = when (rg.checkedRadioButtonId) {
+            R.id.rbDinheiro -> "Dinheiro"
+            R.id.rbCredito -> "Cartão"
+            R.id.rbPix -> "PIX"
+            else -> "Dinheiro"
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val carrinho = carrinho?.map { item ->
+                    ItemVendaBody(item.mercadoria.id, item.quantidade)
+                } ?: emptyList()
+                val vendaBody = VendaBody(cliente?.id ?: 0, pagamento, true, carrinho)
+                Api.servico().criarVenda(vendaBody)
+                aviso("Venda finalizada.")
+                //só te joga de volta pro menu, a pilha ainda existe e tu ainda pode voltar pra ela
+//                b.progresso.visibility = View.GONE
+//                val tela = MenuFragment()
+//                abrir(tela)
+                //reseta a activity para zerar a pilha de fragment pra ninguem poder voltar na venda terminada
+                startActivity(Intent(requireContext(), MainActivity::class.java))
+                requireActivity().finish()
+            } catch (e: Exception) {
+                mostrarErro(e)
+            }
+        }
 
-
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         _b = null
     }
 
-    private fun templateChamadaApi() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            try {
-                // val resposta = Api.servico().algumaRota()
-            } catch (e: Exception) {
-                mostrarErro(e)
-            }
-        }
-    }
+
 
 }
