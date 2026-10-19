@@ -48,10 +48,16 @@ interface ApiService {
     suspend fun criarVenda(@Body dados: VendaBody): Venda
 
     @GET("vendas")
+    suspend fun vendas(@Query("busca") busca: String): List<Venda>
+
+    @GET("vendas")
     suspend fun vendas(): List<Venda>
 
     @GET("vendas/{id}")
     suspend fun venda(@Path("id") id: Int): Venda
+
+    @PUT("vendas/{id}")
+    suspend fun mudarStatusVenda(@Path("id") id: Int, @Body dados: StatusBody): Venda
 }
 
 object Api {

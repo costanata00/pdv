@@ -78,14 +78,9 @@ class CheckoutFragment : FragmentBase() {
                 val carrinho = carrinho?.map { item ->
                     ItemVendaBody(item.mercadoria.id, item.quantidade)
                 } ?: emptyList()
-                val vendaBody = VendaBody(cliente?.id ?: 0, pagamento, true, carrinho)
+                val vendaBody = VendaBody(cliente?.id, pagamento, true, carrinho)
                 Api.servico().criarVenda(vendaBody)
                 aviso("Venda finalizada.")
-                //só te joga de volta pro menu, a pilha ainda existe e tu ainda pode voltar pra ela
-//                b.progresso.visibility = View.GONE
-//                val tela = MenuFragment()
-//                abrir(tela)
-                //reseta a activity para zerar a pilha de fragment pra ninguem poder voltar na venda terminada
                 startActivity(Intent(requireContext(), MainActivity::class.java))
                 requireActivity().finish()
             } catch (e: Exception) {

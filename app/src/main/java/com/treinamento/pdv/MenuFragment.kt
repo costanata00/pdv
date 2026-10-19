@@ -9,8 +9,6 @@ import com.treinamento.pdv.data.Sessao
 import com.treinamento.pdv.databinding.FragmentMenuBinding
 
 class MenuFragment : FragmentBase() {
-
-    // Ligação com o desenho. Pode ficar vazia (null) quando a tela some.
     private var _b: FragmentMenuBinding? = null
     private val b get() = _b!!
 
@@ -24,10 +22,10 @@ class MenuFragment : FragmentBase() {
         titulo("PDV")
         b.saudacao.text = "Olá, ${Sessao.nomeUsuario}"
 
-         b.mercadorias.setOnClickListener { abrir(MercadoriaListaFragment()) }
-         b.clientes.setOnClickListener { abrir(ClienteListaFragment()) }
-         b.novaVenda.setOnClickListener { abrir(VendaFragment()) }
-        // b.historico.setOnClickListener { abrir(HistoricoFragment()) }
+        b.mercadorias.setOnClickListener { abrir(MercadoriaListaFragment()) }
+        b.clientes.setOnClickListener { abrir(ClienteListaFragment()) }
+        b.novaVenda.setOnClickListener { abrir(VendaFragment()) }
+        b.historico.setOnClickListener { abrir(VendaListaFragment()) }
 
         b.sair.setOnClickListener {
             Sessao.sair()

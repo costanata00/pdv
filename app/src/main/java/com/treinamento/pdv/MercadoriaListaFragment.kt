@@ -68,7 +68,7 @@ class MercadoriaListaFragment : FragmentBase() {
                 .setPositiveButton(texto) { _, _ ->
                     viewLifecycleOwner.lifecycleScope.launch {
                         try {
-                            Api.servico().mudarAtivoCliente(m.id, AtivoBody(!m.ativo))
+                            Api.servico().mudarAtivoMercadoria(m.id, AtivoBody(!m.ativo))
                             aviso(texto2)
                             carregar()
                         } catch (e: Exception) {
@@ -133,6 +133,9 @@ class MercadoriaListaFragment : FragmentBase() {
         }else{
             b.mensagem.visibility = View.GONE
         }
+
+
+
     }
 
     override fun onDestroyView() {

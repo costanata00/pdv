@@ -73,6 +73,10 @@ data class VendaBody(
     val itens: List<ItemVendaBody>
 )
 
+data class StatusBody(
+    val status: String,
+)
+
 //diferente do Itemvendabody pq ele tem a mercadoria inteira.
 data class ItemCarrinho(val mercadoria: Mercadoria, var quantidade: Int)
 

@@ -47,15 +47,23 @@
     <ListView
         android:id="@+id/lista"
         android:layout_width="match_parent"
-        android:layout_height="379dp"
+        android:layout_height="302dp"
         android:layout_weight="1" />
+
+    <TextView
+        android:id="@+id/carrinhoLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Carrinho"
+        android:visibility="gone"/>
 
     <ListView
         android:id="@+id/listaCarrinho"
         android:paddingTop="7dp"
         android:layout_width="match_parent"
         android:layout_height="7dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/prosseguir"

@@ -1,9 +1,14 @@
 package com.treinamento.pdv
 
+import android.R
 import android.content.Intent
+import android.view.Gravity
+import android.view.View
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.treinamento.pdv.data.ErroApi
 import com.treinamento.pdv.data.Sessao
@@ -18,7 +23,13 @@ open class TelaBase : AppCompatActivity() {
     }
 
     fun aviso(texto: String) {
-        Toast.makeText(this, texto, Toast.LENGTH_SHORT).show()
+        //Toast.makeText(this, texto, Toast.LENGTH_SHORT).show()
+        //snackbar
+        val snack = Snackbar.make(findViewById<View>(R.id.content), texto, Snackbar.LENGTH_SHORT)
+//        val params = snack.view.layoutParams as FrameLayout.LayoutParams
+//        params.gravity = Gravity.CENTER
+//        snack.view.layoutParams = params
+        snack.show()
     }
 
     fun mostrarErro(erro: Exception) {
@@ -28,7 +39,8 @@ open class TelaBase : AppCompatActivity() {
 
         if (erro is HttpException && erro.code() == 401 && Sessao.token != null) {
             Sessao.sair()
-            aviso("Sua sessão terminou. Entre novamente.")
+            Toast.makeText(this, "Sua sessão terminou. Entre novamente.", Toast.LENGTH_SHORT).show()
+
             val intent = Intent(this, LoginActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             startActivity(intent)
