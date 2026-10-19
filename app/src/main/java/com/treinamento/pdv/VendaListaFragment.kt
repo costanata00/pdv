@@ -20,7 +20,6 @@ import com.treinamento.pdv.databinding.FragmentListaBinding
 import kotlinx.coroutines.launch
 
 class VendaListaFragment : FragmentBase() {
-
     private var filtro ="todas"
     private var _b: FragmentListaBinding? = null
     private val b get() = _b!!
@@ -76,9 +75,9 @@ class VendaListaFragment : FragmentBase() {
                         }
                     }
                 }.setNegativeButton("Ver Mais"){ _, _ ->
-//                    val tela = VendaDetalhesFragment()
-//                    tela.arguments = bundleOf("venda" to Gson().toJson(vendas[posicao]))
-//                    abrir(tela)
+                    val tela = VendaDetalhesFragment()
+                    tela.arguments = bundleOf("vendaID" to vendas[posicao].id)
+                    abrir(tela)
                 }
                 .setNeutralButton("Sair", null)
                 .create()
@@ -139,16 +138,6 @@ class VendaListaFragment : FragmentBase() {
     override fun onDestroyView() {
         super.onDestroyView()
         _b = null
-    }
-
-    private fun templateChamadaApi() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            try {
-                // val resposta = Api.servico().algumaRota()
-            } catch (e: Exception) {
-                mostrarErro(e)
-            }
-        }
     }
 
 }
