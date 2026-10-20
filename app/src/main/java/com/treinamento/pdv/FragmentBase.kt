@@ -1,7 +1,13 @@
 package com.treinamento.pdv
 
+import android.os.Bundle
+import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import com.treinamento.pdv.data.Api
+import com.treinamento.pdv.data.Sessao
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.launch
 
 open class FragmentBase : Fragment() {
     fun aviso(texto: String) {
@@ -14,6 +20,18 @@ open class FragmentBase : Fragment() {
             throw erro
         }
         (requireActivity() as TelaBase).mostrarErro(erro)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (Sessao.token == null) return
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                Sessao.token = Api.servico().refresh().token
+            }catch (e: Exception){
+                mostrarErro(e)
+            }
+        }
     }
 
     //puxando o abrir da tela base

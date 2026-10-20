@@ -16,6 +16,9 @@ interface ApiService {
     @POST("auth/login")
     suspend fun login(@Body dados: LoginRequest): LoginResponse
 
+    @POST("auth/refresh")
+    suspend fun refresh(): RefreshResponse
+
     //Mercadorias
     @GET("mercadorias")
     suspend fun mercadorias(@Query("busca") busca: String): List<Mercadoria>
@@ -54,6 +57,11 @@ interface ApiService {
 
     @PUT("vendas/{id}/cancelar")
     suspend fun cancelarVenda(@Path("id") id: Int)
+
+    //Usuarios
+    @POST("usuarios")
+    suspend fun criarUsuario(@Body dados: UsuarioBody)
+
 }
 
 object Api {
@@ -71,6 +79,8 @@ object Api {
             cadeia.proceed(pedido.build())
         }
         .build()
+
+
 
     fun servico(): ApiService {
         return Retrofit.Builder()

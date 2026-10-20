@@ -199,6 +199,10 @@ class VendaFragment : FragmentBase() {
     }
 
     override fun voltar() {
+        if (itensCarrinho.isEmpty()) {
+            super.voltar()
+            return
+        }
         AlertDialog.Builder(requireContext())
             .setMessage("Tem certeza que quer voltar?\nOs itens que você tiver adicionado serão perdidos.")
             .setPositiveButton("Sim") { _, _ ->

@@ -54,13 +54,3 @@ class MainActivity : TelaBase() {
         return true
     }
 }
-
-
-//Como ler:
-//     No código                                Significa
-//supportFragmentManager           = O "gerente" que troca os quadros da moldura e cuida da pilha
-//beginTransaction() ... .commit() = "Vou fazer uma troca" ... "pode fazer"
-//.replace(R.id.moldura, tela)     = Tira o quadro atual da moldura e põe este
-//.addToBackStack(null)            = Guarda o quadro anterior na pilha, para o voltar funcionar
-//popBackStack()                   = Tira o quadro de cima da pilha (volta uma tela)
-//savedInstanceState == null       = É a primeira vez que a tela abre (e não uma reabertura do Android)

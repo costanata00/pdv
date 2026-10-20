@@ -1,9 +1,31 @@
 package com.treinamento.pdv.data
 
 //Login
-data class LoginRequest(val email: String, val senha: String)
-data class Usuario(val id: Int, val nome: String)
-data class LoginResponse(val token: String, val usuario: Usuario)
+data class LoginRequest(
+    val email: String,
+    val senha: String
+)
+data class LoginResponse(
+    val token: String,
+    val usuario: Usuario,
+    )
+data class RefreshResponse(
+    val token: String,
+    val refreshToken: String?
+)
+
+
+//Usuario
+data class UsuarioBody(
+    val nome: String,
+    val email: String,
+    val senha: String
+)
+
+data class Usuario(
+    val id: Int,
+    val nome: String
+)
 
 //Mercadorias
 data class Mercadoria(

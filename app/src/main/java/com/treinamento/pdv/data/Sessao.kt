@@ -18,10 +18,6 @@ object Sessao {
         get() = gaveta.getString("nome", "")
         set(valor) { gaveta.edit().putString("nome", valor).apply() }
 
-    var linkPFP: String?
-        get() = gaveta.getString("imgPFP", "")
-        set(valor) { gaveta.edit().putString("imgPFP", valor).apply() }
-
     //o servidor salvo no login
     var servidor: String
         get() = gaveta.getString("servidor", null) ?: "http://127.0.0.1:3000/"

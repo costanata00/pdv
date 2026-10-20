@@ -67,6 +67,12 @@ class ClienteFormFragment : FragmentBase() {
     private fun salvar() {
         val dados = lerCampos() ?: return
 
+        val cpfCnpjRegex = """^(\d{3}\.\d{3}\.\d{3}-\d{2}|\d{11}|\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}|\d{14})$""".toRegex()
+        if( !dados.cpf_cnpj.isNullOrBlank()  && !cpfCnpjRegex.matches(dados.cpf_cnpj)){
+            aviso("Informe um CPF/CNPJ válido.")
+            return
+        }
+
         b.salvar.isEnabled = false
         viewLifecycleOwner.lifecycleScope.launch {
             try {
