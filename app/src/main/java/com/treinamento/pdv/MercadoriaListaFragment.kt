@@ -25,19 +25,15 @@ class MercadoriaListaFragment : FragmentBase() {
         _b = FragmentListaBinding.inflate(inflater, container, false)
         return b.root
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         titulo("Mercadorias")
-
         b.buscar.setOnClickListener {
             carregar()
         }
-
         b.novo.setOnClickListener {
             abrir(MercadoriaFormFragment())
         }
-
         b.filtro.visibility = View.VISIBLE
         b.filtro.setOnClickListener {
             if (filtro == "todas") {
@@ -52,14 +48,12 @@ class MercadoriaListaFragment : FragmentBase() {
             }
             carregar()
         }
-
         b.lista.setOnItemClickListener { _, _, posicao, _ ->
             val escolhida = mercadorias[posicao]
             val tela = MercadoriaFormFragment()
             tela.arguments = bundleOf("mercadoria" to Gson().toJson(escolhida))
             abrir(tela)
         }
-
         b.lista.setOnItemLongClickListener { _, _, posicao, _ ->
             val m = mercadorias[posicao]
             val texto = if (m.ativo) "Desativar" else "Ativar"
@@ -86,21 +80,15 @@ class MercadoriaListaFragment : FragmentBase() {
                 .show()
             true
         }
-
-
-
     }
-
     override fun onResume() {
         super.onResume()
         carregar()
     }
-
     private fun carregar() {
         val parametro = b.busca.text.toString().trim()
         b.progresso.visibility = View.VISIBLE
         b.mensagem.visibility = View.GONE
-
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val todas = Api.servico().mercadorias(parametro)
@@ -118,7 +106,6 @@ class MercadoriaListaFragment : FragmentBase() {
             b.progresso.visibility = View.GONE
         }
     }
-
     private fun mostrarLista() {
         val linhas = ArrayList<String>()
         for (m in mercadorias) {
@@ -133,11 +120,7 @@ class MercadoriaListaFragment : FragmentBase() {
         }else{
             b.mensagem.visibility = View.GONE
         }
-
-
-
     }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _b = null

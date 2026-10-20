@@ -10,14 +10,14 @@ fun moeda(valor: Double): String {
     return "R$ " + String.format(Locale("pt", "BR"), "%,.2f", valor)
 }
 
-// A data chega da API assim: "2026-10-13T12:34:54.004Z". Vira "13/10/2026 09:34".
 fun dataHora(textoDaApi: String?): String {
     if (textoDaApi == null) {
         return ""
     }
     try {
         val leitor = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
-        leitor.timeZone = TimeZone.getTimeZone("UTC")
+        leitor.timeZone = TimeZone.getTimeZone("GMT+03:00")
+        println(leitor.timeZone)
         val data = leitor.parse(textoDaApi)
         if (data == null) {
             return textoDaApi

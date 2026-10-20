@@ -11,13 +11,12 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 import java.util.concurrent.TimeUnit
 
-// O CARDÁPIO: cada função é um pedido que o app pode fazer à sua API.
 interface ApiService {
 
     @POST("auth/login")
     suspend fun login(@Body dados: LoginRequest): LoginResponse
 
-    // ----- Mercadorias -----
+    //Mercadorias
     @GET("mercadorias")
     suspend fun mercadorias(@Query("busca") busca: String): List<Mercadoria>
 
@@ -30,7 +29,7 @@ interface ApiService {
     @PUT("mercadorias/{id}")
     suspend fun mudarAtivoMercadoria(@Path("id") id: Int, @Body dados: AtivoBody): Mercadoria
 
-    // ----- Clientes -----
+    //Clientes
     @GET("clientes")
     suspend fun clientes(@Query("busca") busca: String): List<Cliente>
 
@@ -43,21 +42,18 @@ interface ApiService {
     @PUT("clientes/{id}")
     suspend fun mudarAtivoCliente(@Path("id") id: Int, @Body dados: AtivoBody): Cliente
 
-    // ----- Vendas -----
+    //Vendas
     @POST("vendas")
     suspend fun criarVenda(@Body dados: VendaBody): Venda
 
     @GET("vendas")
     suspend fun vendas(@Query("busca") busca: String): List<Venda>
 
-    @GET("vendas")
-    suspend fun vendas(): List<Venda>
-
     @GET("vendas/{id}")
     suspend fun venda(@Path("id") id: Int): Venda
 
-    @PUT("vendas/{id}")
-    suspend fun mudarStatusVenda(@Path("id") id: Int, @Body dados: StatusBody): Venda
+    @PUT("vendas/{id}/cancelar")
+    suspend fun cancelarVenda(@Path("id") id: Int)
 }
 
 object Api {

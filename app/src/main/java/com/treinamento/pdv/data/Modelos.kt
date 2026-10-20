@@ -41,7 +41,7 @@ data class ClienteBody(
 
 data class AtivoBody(val ativo: Boolean)
 
-// ----- Vendas -----
+//Vendas
 data class ItemVenda(
     val id: Int,
     val mercadoria_id: Int,

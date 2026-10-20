@@ -67,8 +67,8 @@ class VendaDetalhesFragment : FragmentBase() {
         }
         b.cliente.text = v.cliente?.nome ?: "Não informado"
         b.total.text = moeda(v.valor_total)
-        b.status.text = v.status ?: "Não informado"
-        b.pago.text = v.forma_pag ?: "Não informado"
+        b.status.text = v.status?.uppercase() ?: "Não informado"
+        b.formaPag.text = v.forma_pag?.uppercase() ?: "Não informado"
     }
 
 }

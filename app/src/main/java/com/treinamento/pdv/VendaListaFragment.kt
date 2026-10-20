@@ -57,17 +57,15 @@ class VendaListaFragment : FragmentBase() {
 
         b.lista.setOnItemLongClickListener { _, _, posicao, _ ->
             val v = vendas[posicao]
-            if (v.status == "cancelada") {
-                return@setOnItemLongClickListener false
-            }
-            //FAZER UM VER MAIS, FAZER UM VER MAIS
-
             AlertDialog.Builder(requireContext())
                 .setPositiveButton("Cancelar Venda") { _, _ ->
+                    if (v.status == "cancelada") {
+                        aviso("A venda já está cancelada.")
+                        return@setPositiveButton
+                    }
                     viewLifecycleOwner.lifecycleScope.launch {
                         try {
-
-                            Api.servico().mudarStatusVenda(v.id, StatusBody("cancelada"))
+                            Api.servico().cancelarVenda(v.id)
                             aviso("Cancelada")
                             carregar()
                         } catch (e: Exception) {
@@ -118,10 +116,7 @@ class VendaListaFragment : FragmentBase() {
     private fun mostrarLista() {
         val linhas = ArrayList<String>()
         for (v in vendas) {
-            var nome = v.cliente?.nome
-            if (nome.isNullOrBlank()){
-                nome = "Não informado"
-            }
+            val nome = v.cliente?.nome ?: "Não informado"
             linhas.add("Cliente: ${nome}\n" + "Forma de Pagamento: ${v.forma_pag}\n" + "Status: ${v.status?.uppercase()}\n"
                     + "Valor Total: ${moeda(v.valor_total)} \n" + "Data: ${dataHora(v.data_venda)}\n" + "Usuario: ${v.usuario?.nome}")
         }
