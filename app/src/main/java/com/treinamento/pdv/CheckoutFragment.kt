@@ -1,5 +1,6 @@
 package com.treinamento.pdv
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.RadioGroup
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
 import com.treinamento.pdv.data.Api
@@ -14,6 +16,7 @@ import com.treinamento.pdv.data.Cliente
 import com.treinamento.pdv.data.ItemCarrinho
 import com.treinamento.pdv.data.ItemVendaBody
 import com.treinamento.pdv.data.Sessao
+import com.treinamento.pdv.data.Venda
 import com.treinamento.pdv.data.VendaBody
 import com.treinamento.pdv.databinding.FragmentCheckoutBinding
 import kotlinx.coroutines.launch
@@ -79,10 +82,23 @@ class CheckoutFragment : FragmentBase() {
                     ItemVendaBody(item.mercadoria.id, item.quantidade)
                 } ?: emptyList()
                 val vendaBody = VendaBody(cliente?.id, pagamento, true, carrinho)
-                Api.servico().criarVenda(vendaBody)
-                aviso("Venda finalizada.")
-                startActivity(Intent(requireContext(), MainActivity::class.java))
-                requireActivity().finish()
+                val venda = Api.servico().criarVenda(vendaBody)
+                AlertDialog.Builder(requireContext())
+                    .setMessage("Venda Finalizada!\nQuer imprimir nota fiscal?.")
+                    .setPositiveButton("Quero ") { _, _ ->
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            val ok = ImpressoraRede.imprimeVenda(requireContext(),venda=venda)
+                            if (!ok) Toast.makeText(requireContext(), "Falha na impressão", Toast.LENGTH_SHORT).show()
+                            startActivity(Intent(requireContext(), MainActivity::class.java))
+                            requireActivity().finish()
+                        }
+                    }
+                    .setNegativeButton("Não quero", { _, _ ->
+                        startActivity(Intent(requireContext(), MainActivity::class.java))
+                        requireActivity().finish()
+                    })
+                    .create()
+                    .show()
             } catch (e: Exception) {
                 mostrarErro(e)
             }

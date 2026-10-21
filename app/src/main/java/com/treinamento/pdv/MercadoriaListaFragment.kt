@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
@@ -14,7 +13,8 @@ import com.treinamento.pdv.data.AtivoBody
 import com.treinamento.pdv.data.Mercadoria
 import com.treinamento.pdv.databinding.FragmentListaBinding
 import kotlinx.coroutines.launch
-
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 class MercadoriaListaFragment : FragmentBase() {
     private var filtro = "ativas"
     private var _b: FragmentListaBinding? = null
@@ -28,6 +28,9 @@ class MercadoriaListaFragment : FragmentBase() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         titulo("Mercadorias")
+        b.lista.layoutManager = LinearLayoutManager(requireContext())
+        b.lista.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
+
         b.buscar.setOnClickListener {
             carregar()
         }
@@ -48,38 +51,39 @@ class MercadoriaListaFragment : FragmentBase() {
             }
             carregar()
         }
-        b.lista.setOnItemClickListener { _, _, posicao, _ ->
-            val escolhida = mercadorias[posicao]
-            val tela = MercadoriaFormFragment()
-            tela.arguments = bundleOf("mercadoria" to Gson().toJson(escolhida))
-            abrir(tela)
-        }
-        b.lista.setOnItemLongClickListener { _, _, posicao, _ ->
-            val m = mercadorias[posicao]
-            val texto = if (m.ativo) "Desativar" else "Ativar"
-            val texto2 = if (m.ativo) "Desativado" else "Ativado"
-            AlertDialog.Builder(requireContext())
-                .setPositiveButton(texto) { _, _ ->
-                    viewLifecycleOwner.lifecycleScope.launch {
-                        try {
-                            Api.servico().mudarAtivoMercadoria(m.id, AtivoBody(!m.ativo))
-                            aviso(texto2)
-                            carregar()
-                        } catch (e: Exception) {
-                            mostrarErro(e)
-                        }
+    }
+
+    private fun clicar(posicao: Int) {
+        val escolhida = mercadorias[posicao]
+        val tela = MercadoriaFormFragment()
+        tela.arguments = bundleOf("mercadoria" to Gson().toJson(escolhida))
+        abrir(tela)
+    }
+
+    private fun segurar(posicao: Int) {
+        val m = mercadorias[posicao]
+        val texto = if (m.ativo) "Desativar" else "Ativar"
+        val texto2 = if (m.ativo) "Desativado" else "Ativado"
+        AlertDialog.Builder(requireContext())
+            .setPositiveButton(texto) { _, _ ->
+                viewLifecycleOwner.lifecycleScope.launch {
+                    try {
+                        Api.servico().mudarAtivoMercadoria(m.id, AtivoBody(!m.ativo))
+                        aviso(texto2)
+                        carregar()
+                    } catch (e: Exception) {
+                        mostrarErro(e)
                     }
                 }
-                .setNegativeButton( "Editar") { _, _ ->
-                    val tela = MercadoriaFormFragment()
-                    tela.arguments = bundleOf("mercadoria" to Gson().toJson(mercadorias[posicao]))
-                    abrir(tela)
-                }
-                .setNeutralButton("Sair", null)
-                .create()
-                .show()
-            true
-        }
+            }
+            .setNegativeButton( "Editar") { _, _ ->
+                val tela = MercadoriaFormFragment()
+                tela.arguments = bundleOf("mercadoria" to Gson().toJson(mercadorias[posicao]))
+                abrir(tela)
+            }
+            .setNeutralButton("Sair", null)
+            .create()
+            .show()
     }
     override fun onResume() {
         super.onResume()
@@ -114,7 +118,7 @@ class MercadoriaListaFragment : FragmentBase() {
                 nome += " (Inativo)"}
             linhas.add("$nome\nCód. ${m.codigo}  ·  Estoque: ${m.estoque}\n${moeda(m.preco)}")
         }
-        b.lista.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, linhas)
+        b.lista.adapter = LinhaAdapter(linhas, { clicar(it) }, { segurar(it) })
         if (mercadorias.isEmpty()){
             b.mensagem.visibility = View.VISIBLE
         }else{

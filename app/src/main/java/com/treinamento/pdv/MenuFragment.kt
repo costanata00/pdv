@@ -22,11 +22,11 @@ class MenuFragment : FragmentBase() {
         titulo("PDV")
         b.saudacao.text = "Olá, ${Sessao.nomeUsuario}"
 
-        b.mercadorias.setOnClickListener { abrir(MercadoriaListaFragment()) }
-        b.clientes.setOnClickListener { abrir(ClienteListaFragment()) }
-        b.novaVenda.setOnClickListener { abrir(VendaFragment()) }
-        b.historico.setOnClickListener { abrir(VendaListaFragment()) }
-        b.cadastrar.setOnClickListener { abrir(UsuarioFormFragment()) }
+        b.mercadorias.setOnClickListener { abrir(MercadoriaListaFragment())}
+        b.clientes.setOnClickListener    { abrir(ClienteListaFragment())   }
+        b.novaVenda.setOnClickListener   { abrir(VendaFragment())          }
+        b.historico.setOnClickListener   { abrir(VendaListaFragment())     }
+        b.cadastrar.setOnClickListener   { abrir(UsuarioFormFragment())    }
         b.sair.setOnClickListener {
             Sessao.sair()
             startActivity(Intent(requireContext(), LoginActivity::class.java))

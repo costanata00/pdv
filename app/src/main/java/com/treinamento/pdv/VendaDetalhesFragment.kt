@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.treinamento.pdv.data.Api
 import com.treinamento.pdv.data.Venda
@@ -27,6 +28,20 @@ class VendaDetalhesFragment : FragmentBase() {
         super.onViewCreated(view, savedInstanceState)
         titulo("Detalhes da Venda")
         vendaID = arguments?.getInt("vendaID")
+
+        b.imprimir.setOnClickListener {
+//            val v = venda ?: return@setOnClickListener
+//            viewLifecycleOwner.lifecycleScope.launch {
+//                if (!ImpressoraRede.imprimeVenda(requireContext(), v)) aviso("Falha ao imprimir")
+//            }
+            lifecycleScope.launch {
+                val ok = ImpressoraRede.imprimeVenda(requireContext(), venda = venda ?: return@launch)
+                if (!ok) Toast.makeText(requireContext(), "Falha na impressão", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+
+
     }
 
 
@@ -70,5 +85,9 @@ class VendaDetalhesFragment : FragmentBase() {
         b.status.text = v.status?.uppercase() ?: "Não informado"
         b.formaPag.text = v.forma_pag?.uppercase() ?: "Não informado"
     }
+
+
+
+
 
 }

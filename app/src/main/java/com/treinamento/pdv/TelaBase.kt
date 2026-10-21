@@ -24,7 +24,6 @@ open class TelaBase : AppCompatActivity() {
 
     fun aviso(texto: String) {
         //Toast.makeText(this, texto, Toast.LENGTH_SHORT).show()
-        //snackbar
         val snack = Snackbar.make(findViewById<View>(R.id.content), texto, Snackbar.LENGTH_SHORT)
 //        val params = snack.view.layoutParams as FrameLayout.LayoutParams
 //        params.gravity = Gravity.CENTER

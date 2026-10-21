@@ -20,7 +20,6 @@ class MainActivity : TelaBase() {
         }
         atualizarSeta()
 
-        // Botão/gesto voltar do celular também passa pelo voltar() da tela
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 voltar()

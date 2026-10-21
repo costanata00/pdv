@@ -15,7 +15,6 @@ open class FragmentBase : Fragment() {
     }
 
     fun mostrarErro(erro: Exception) {
-        // A tela foi fechada no meio do pedido. Não é um erro de verdade.
         if (erro is CancellationException) {
             throw erro
         }

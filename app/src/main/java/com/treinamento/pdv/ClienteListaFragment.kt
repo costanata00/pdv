@@ -1,11 +1,9 @@
 package com.treinamento.pdv
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
@@ -14,12 +12,10 @@ import com.treinamento.pdv.data.Api
 import com.treinamento.pdv.data.AtivoBody
 import com.treinamento.pdv.data.Cliente
 import com.treinamento.pdv.data.ItemCarrinho
-import com.treinamento.pdv.data.Mercadoria
-import com.treinamento.pdv.data.Sessao
 import com.treinamento.pdv.databinding.FragmentListaBinding
 import kotlinx.coroutines.launch
-import kotlin.text.get
-
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 class ClienteListaFragment : FragmentBase() {
     private var carrinho: List<ItemCarrinho>? = null
     private var filtro = "ativas";
@@ -36,6 +32,9 @@ class ClienteListaFragment : FragmentBase() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         titulo("Clientes")
+
+        b.lista.layoutManager = LinearLayoutManager(requireContext())
+        b.lista.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
 
         b.buscar.setOnClickListener {
             carregar()
@@ -59,57 +58,11 @@ class ClienteListaFragment : FragmentBase() {
             }
             carregar()
         }
-
-        b.lista.setOnItemClickListener { _, _, posicao, _ ->
-            val tela = ClienteFormFragment()
-            tela.arguments = bundleOf("cliente" to Gson().toJson(clientes[posicao]))
-            abrir(tela)
-        }
-
-        b.lista.setOnItemLongClickListener { _, _, posicao, _ ->
-            val c = clientes[posicao]
-            val texto = if (c.ativo) "Desativar" else "Ativar"
-            val texto2 = if (c.ativo) "Desativado" else "Ativado"
-            AlertDialog.Builder(requireContext())
-                .setPositiveButton(texto) { _, _ ->
-                    viewLifecycleOwner.lifecycleScope.launch {
-                        try {
-                            Api.servico().mudarAtivoCliente(c.id, AtivoBody(!c.ativo))
-                            aviso(texto2)
-                            carregar()
-                        } catch (e: Exception) {
-                            mostrarErro(e)
-                        }
-                    }
-                }
-                .setNegativeButton( "Editar") { _, _ ->
-                    val tela = ClienteFormFragment()
-                    tela.arguments = bundleOf("cliente" to Gson().toJson(clientes[posicao]))
-                    abrir(tela)
-                }
-                .setNeutralButton("Sair", null)
-                .create()
-                .show()
-            true
-        }
-
-        b.buscar.setOnLongClickListener { view ->
-
-            true
-        }
-
-
         val json = arguments?.getString("carrinho")
         if (json != null) {
             carrinho = Gson().fromJson(json, Array<ItemCarrinho>::class.java).toList()
             b.filtro.visibility = View.GONE
             val tela = CheckoutFragment()
-            b.lista.setOnItemClickListener { _, _, posicao, _ ->
-                tela.arguments = bundleOf(
-                    "carrinho" to json, "cliente" to Gson().toJson(clientes[posicao])
-                )
-                abrir(tela)
-            }
             b.novo.text = "Prosseguir sem cliente"
             b.novo.setOnClickListener {
                 tela.arguments = bundleOf("carrinho" to json)
@@ -118,6 +71,48 @@ class ClienteListaFragment : FragmentBase() {
         }
 
 
+    }
+
+    //toque na linha: se veio do carrinho, escolhe o cliente da venda; senão, abre para editar
+    private fun clicar(posicao: Int) {
+        val json = arguments?.getString("carrinho")
+        if (json != null) {
+            val tela = CheckoutFragment()
+            tela.arguments = bundleOf(
+                "carrinho" to json, "cliente" to Gson().toJson(clientes[posicao])
+            )
+            abrir(tela)
+        } else {
+            val tela = ClienteFormFragment()
+            tela.arguments = bundleOf("cliente" to Gson().toJson(clientes[posicao]))
+            abrir(tela)
+        }
+    }
+
+    private fun segurar(posicao: Int) {
+        val c = clientes[posicao]
+        val texto = if (c.ativo) "Desativar" else "Ativar"
+        val texto2 = if (c.ativo) "Desativado" else "Ativado"
+        AlertDialog.Builder(requireContext())
+            .setPositiveButton(texto) { _, _ ->
+                viewLifecycleOwner.lifecycleScope.launch {
+                    try {
+                        Api.servico().mudarAtivoCliente(c.id, AtivoBody(!c.ativo))
+                        aviso(texto2)
+                        carregar()
+                    } catch (e: Exception) {
+                        mostrarErro(e)
+                    }
+                }
+            }
+            .setNegativeButton( "Editar") { _, _ ->
+                val tela = ClienteFormFragment()
+                tela.arguments = bundleOf("cliente" to Gson().toJson(clientes[posicao]))
+                abrir(tela)
+            }
+            .setNeutralButton("Sair", null)
+            .create()
+            .show()
     }
 
     override fun onDestroyView() {
@@ -163,7 +158,7 @@ class ClienteListaFragment : FragmentBase() {
 
             linhas.add("$nome\nCPF/CNPJ. $cpf\nTelefone: $telefone\nEmail: $email")
         }
-        b.lista.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, linhas)
+        b.lista.adapter = LinhaAdapter(linhas, { clicar(it) }, { segurar(it) })
         if (clientes.isEmpty()){
             b.mensagem.visibility = View.VISIBLE
         }else{

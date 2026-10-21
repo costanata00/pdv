@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.treinamento.pdv"
-        minSdk = 24
+        minSdk = 28
         targetSdk = 37
         versionCode = 1
         versionName = "1.0"
@@ -50,5 +50,6 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation("androidx.fragment:fragment-ktx:1.8.2")
+    implementation(files("libs/smartrede-sdk-l400-4.3.28.release.aar"))
 }
 

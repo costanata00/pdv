@@ -79,6 +79,7 @@ class VendaFragment : FragmentBase() {
         b.listaCarrinho.adapter = CarrinhoAdapter()
         if (itensCarrinho.isEmpty()) b.listaCarrinho.visibility = View.GONE else b.listaCarrinho.visibility = View.VISIBLE
         b.carrinhoLabel.visibility = b.listaCarrinho.visibility
+        b.divisorCarrinho.visibility = b.listaCarrinho.visibility
 
         b.prosseguir.text = "Subtotal: ${moeda(calcularTotalCarrinho())}"
     }
@@ -174,7 +175,7 @@ class VendaFragment : FragmentBase() {
         private fun remover(m: Mercadoria, quantidade: Int) {
             val item = itensCarrinho.find { it.mercadoria.id == m.id }
             item!!.quantidade -= quantidade
-            if (quantidade <= 0) itensCarrinho.remove(item);
+            if (item.quantidade <= 0) itensCarrinho.remove(item);
             aviso("${m.descricao} Removido")
             b.prosseguir.text = "Subtotal: ${moeda(calcularTotalCarrinho())}"
             mostrarLista()

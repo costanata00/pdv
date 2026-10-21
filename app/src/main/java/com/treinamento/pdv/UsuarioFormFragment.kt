@@ -1,6 +1,7 @@
 package com.treinamento.pdv
 
 import android.os.Bundle
+import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,11 +57,22 @@ class UsuarioFormFragment : FragmentBase() {
         }
     }
 
-    private fun lerCampos(): UsuarioBody {
+    private fun lerCampos(): UsuarioBody? {
         val nome = b.nome.text.toString().trim()
         val email = b.email.text.toString().trim()
         val senha = b.senha.text.toString()
-
+        if (nome.isEmpty()) {
+            aviso("Informe o nome.")
+            return null
+        }
+        if (email.isEmpty() || (email.isNotEmpty() && !Patterns.EMAIL_ADDRESS.matcher(email).matches())) {
+            aviso("Informe um email válido.")
+            return null
+        }
+        if (senha.isEmpty()) {
+            aviso("Informe a senha.")
+            return null
+        }
         return UsuarioBody(nome, email, senha)
     }
 

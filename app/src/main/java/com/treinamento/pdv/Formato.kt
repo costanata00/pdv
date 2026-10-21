@@ -17,7 +17,6 @@ fun dataHora(textoDaApi: String?): String {
     try {
         val leitor = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
         leitor.timeZone = TimeZone.getTimeZone("GMT+03:00")
-        println(leitor.timeZone)
         val data = leitor.parse(textoDaApi)
         if (data == null) {
             return textoDaApi
