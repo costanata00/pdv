@@ -2,12 +2,21 @@ package com.treinamento.pdv
 
 import android.R
 import android.content.Intent
+import android.os.Bundle
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.treinamento.pdv.data.ErroApi
@@ -17,6 +26,64 @@ import retrofit2.HttpException
 import java.io.IOException
 
 open class TelaBase : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        // A partir do Android 15 o app sempre desenha atrás das barras do sistema.
+        // Ligamos isso em todas as versões e tratamos os espaços em comBarraDeTitulo().
+        enableEdgeToEdge()
+        super.onCreate(savedInstanceState)
+    }
+
+    // Toda tela que chamar setContentView ganha a barra de título no topo
+    // e fica longe da barra de status, da barra de navegação e do teclado.
+    override fun setContentView(layoutResID: Int) {
+        setContentView(layoutInflater.inflate(layoutResID, FrameLayout(this), false))
+    }
+
+    override fun setContentView(view: View) {
+        super.setContentView(comBarraDeTitulo(view))
+    }
+
+    override fun setContentView(view: View, params: ViewGroup.LayoutParams) {
+        setContentView(view)
+    }
+
+    private fun comBarraDeTitulo(conteudo: View): View {
+        val valor = TypedValue()
+        theme.resolveAttribute(androidx.appcompat.R.attr.actionBarSize, valor, true)
+        val alturaBarra = TypedValue.complexToDimensionPixelSize(valor.data, resources.displayMetrics)
+
+        val barra = MaterialToolbar(this)
+        val topo = AppBarLayout(this)
+        topo.addView(barra, AppBarLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, alturaBarra))
+
+        val raiz = LinearLayout(this)
+        raiz.orientation = LinearLayout.VERTICAL
+        raiz.addView(topo, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        raiz.addView(conteudo, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f))
+
+        // A barra passa a ser a action bar: title e seta de voltar continuam funcionando
+        setSupportActionBar(barra)
+
+        ViewCompat.setOnApplyWindowInsetsListener(raiz) { _, insets ->
+            val sistema = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            val teclado = insets.getInsets(WindowInsetsCompat.Type.ime())
+
+            // barra de status fica atrás da barra de título (mesma cor)
+            topo.setPadding(sistema.left, sistema.top, sistema.right, 0)
+
+            // conteúdo não entra embaixo da barra de navegação nem do teclado
+            val params = conteudo.layoutParams as LinearLayout.LayoutParams
+            params.setMargins(sistema.left, 0, sistema.right, maxOf(sistema.bottom, teclado.bottom))
+            conteudo.layoutParams = params
+
+            WindowInsetsCompat.CONSUMED
+        }
+        return raiz
+    }
+
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return true
