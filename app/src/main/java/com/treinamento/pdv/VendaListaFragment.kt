@@ -114,6 +114,7 @@ class VendaListaFragment : FragmentBase() {
     }
     private fun mostrarLista() {
         val linhas = ArrayList<String>()
+        vendas=vendas.sortedByDescending{ it.id }
         for (v in vendas) {
             val nome = v.cliente?.nome ?: "Não informado"
             linhas.add("Cliente: ${nome}\n" + "Forma de Pagamento: ${v.forma_pag}\n" + "Status: ${v.status?.uppercase()}\n"

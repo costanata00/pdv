@@ -30,15 +30,15 @@ class VendaDetalhesFragment : FragmentBase() {
         vendaID = arguments?.getInt("vendaID")
 
         b.imprimir.setOnClickListener {
-//            val v = venda ?: return@setOnClickListener
-//            viewLifecycleOwner.lifecycleScope.launch {
-//                if (!ImpressoraRede.imprimeVenda(requireContext(), v)) aviso("Falha ao imprimir")
-//            }
-            lifecycleScope.launch {
-                val ok = ImpressoraRede.imprimeVenda(requireContext(), venda = venda ?: return@launch)
+            val v = venda ?: return@setOnClickListener
+            b.imprimir.isEnabled = false
+            viewLifecycleOwner.lifecycleScope.launch {
+                val ok = ImpressoraRede.imprimeVenda(requireContext(), venda = v)
                 if (!ok) Toast.makeText(requireContext(), "Falha na impressão", Toast.LENGTH_SHORT).show()
+                _b?.imprimir?.isEnabled = true
             }
         }
+
 
 
 
@@ -80,10 +80,12 @@ class VendaDetalhesFragment : FragmentBase() {
         } else {
             b.mensagem.visibility = View.GONE
         }
-        b.cliente.text = v.cliente?.nome ?: "Não informado"
-        b.total.text = moeda(v.valor_total)
-        b.status.text = v.status?.uppercase() ?: "Não informado"
-        b.formaPag.text = v.forma_pag?.uppercase() ?: "Não informado"
+        b.vendaID.text = "Venda #${v.id}"
+        b.cliente.text = "Cliente: ${v.cliente?.nome ?: "Não informado"}"
+
+        b.total.text = "Total: ${moeda(v.valor_total)}"
+        b.status.text = "Status: ${v.status?.uppercase() ?: "Não informado"}"
+        b.formaPag.text ="Pagamento: ${v.forma_pag?.uppercase() ?: "Não informado"}"
     }
 
 

@@ -3,10 +3,12 @@ package com.treinamento.pdv
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.EditText
 import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
@@ -20,6 +22,7 @@ import com.treinamento.pdv.data.Venda
 import com.treinamento.pdv.data.VendaBody
 import com.treinamento.pdv.databinding.FragmentCheckoutBinding
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 class CheckoutFragment : FragmentBase() {
 
@@ -54,28 +57,74 @@ class CheckoutFragment : FragmentBase() {
     private fun mostrarLista() {
         val itens = carrinho ?: emptyList()
         val linhas = ArrayList<String>()
-        var total = 0.0
         for (item in itens) {
             val m = item.mercadoria
             val subtotal = m.preco * item.quantidade
-            total += subtotal
             linhas.add("${m.descricao} x${item.quantidade} = ${moeda(subtotal)}")
 
         }
         b.lista.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, linhas)
-        b.total.text = "Subtotal: ${moeda(total)}"
+        b.total.text = "Total: ${moeda(calcularTotal())}"
         b.cliente.text = cliente?.nome ?: "Cliente não selecionado"
 
     }
+
+    private fun calcularTotal(): Double {
+        var total = 0.0
+        for (item in carrinho ?: emptyList()) {
+            total += item.mercadoria.preco * item.quantidade
+        }
+        return total
+    }
+
     private fun finalizarVenda(){
-        b.progresso.visibility = View.VISIBLE
         val rg = view?.findViewById<RadioGroup>(R.id.rgPagamento) ?: return
-        var pagamento = when (rg.checkedRadioButtonId) {
+        val pagamento = when (rg.checkedRadioButtonId) {
             R.id.rbDinheiro -> "Dinheiro"
-            R.id.rbCredito -> "Cartão"
+            R.id.rbCredito -> "Cartão de Crédito"
             R.id.rbPix -> "PIX"
             else -> "Dinheiro"
         }
+        if (pagamento == "Dinheiro") {
+            perguntarValorRecebido()
+        } else {
+            enviarVenda(pagamento, 0.0)
+        }
+    }
+
+    private fun perguntarValorRecebido() {
+        val total = calcularTotal()
+        val campoDinheiro = EditText(requireContext())
+        campoDinheiro.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+        campoDinheiro.textAlignment = View.TEXT_ALIGNMENT_CENTER
+        campoDinheiro.setText(String.format(Locale.US, "%.2f", total))
+        campoDinheiro.selectAll()
+
+        val dialogo = AlertDialog.Builder(requireContext())
+            .setTitle("Pagamento em dinheiro")
+            .setMessage("Total: ${moeda(total)}\nValor recebido:")
+            .setView(campoDinheiro)
+            .setPositiveButton("Confirmar", null)
+            .setNegativeButton("Cancelar", null)
+            .create()
+
+        dialogo.setOnShowListener {
+            dialogo.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                val recebido = campoDinheiro.text.toString().replace(",", ".").toDoubleOrNull()
+                if (recebido == null || recebido < total) {
+                    campoDinheiro.error = "Valor menor que o total"
+                } else {
+                    dialogo.dismiss()
+                    enviarVenda("Dinheiro", recebido - total)
+                }
+            }
+        }
+        dialogo.show()
+    }
+
+    private fun enviarVenda(pagamento: String, troco: Double) {
+        b.progresso.visibility = View.VISIBLE
+        b.novo.isEnabled = false
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val carrinho = carrinho?.map { item ->
@@ -83,12 +132,17 @@ class CheckoutFragment : FragmentBase() {
                 } ?: emptyList()
                 val vendaBody = VendaBody(cliente?.id, pagamento, true, carrinho)
                 val venda = Api.servico().criarVenda(vendaBody)
+                b.progresso.visibility = View.GONE
+                var mensagem = "Venda Finalizada"
+                if (pagamento == "Dinheiro") mensagem += "\nTroco: ${moeda(troco)}"
                 AlertDialog.Builder(requireContext())
-                    .setMessage("Venda Finalizada!\nQuer imprimir nota fiscal?.")
+                    .setMessage("$mensagem\nQuer imprimir nota fiscal?")
+                    .setCancelable(false)
                     .setPositiveButton("Quero ") { _, _ ->
                         viewLifecycleOwner.lifecycleScope.launch {
-                            val ok = ImpressoraRede.imprimeVenda(requireContext(),venda=venda)
-                            if (!ok) Toast.makeText(requireContext(), "Falha na impressão", Toast.LENGTH_SHORT).show()
+                            val completa = Api.servico().venda(venda.id)
+                            val ok = ImpressoraRede.imprimeVenda(requireContext(), venda = completa)
+                            if (!ok) aviso("Falha na impressão")
                             startActivity(Intent(requireContext(), MainActivity::class.java))
                             requireActivity().finish()
                         }
@@ -100,6 +154,8 @@ class CheckoutFragment : FragmentBase() {
                     .create()
                     .show()
             } catch (e: Exception) {
+                b.progresso.visibility = View.GONE
+                b.novo.isEnabled = true
                 mostrarErro(e)
             }
         }

@@ -86,6 +86,8 @@ data class Venda(
     val itens_vendas: List<ItemVenda>?
 )
 
+data class ItemCarrinho(val mercadoria: Mercadoria, var quantidade: Int)
+
 data class ItemVendaBody(val mercadoria_id: Int, val quantidade: Int)
 
 data class VendaBody(
@@ -94,12 +96,5 @@ data class VendaBody(
     val pago: Boolean,
     val itens: List<ItemVendaBody>
 )
-
-data class StatusBody(
-    val status: String,
-)
-
-//diferente do Itemvendabody pq ele tem a mercadoria inteira.
-data class ItemCarrinho(val mercadoria: Mercadoria, var quantidade: Int)
 
 data class ErroApi(val error: String?)
