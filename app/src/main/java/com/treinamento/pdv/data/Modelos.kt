@@ -7,11 +7,15 @@ data class LoginRequest(
 )
 data class LoginResponse(
     val token: String,
+    val refreshToken: String,
     val usuario: Usuario,
     )
+data class RefreshBody(
+    val refreshToken: String
+)
 data class RefreshResponse(
     val token: String,
-    val refreshToken: String?
+    val refreshToken: String
 )
 
 

@@ -50,6 +50,7 @@ class LoginActivity : TelaBase() {
                 //           cria a conexão-----------cria objeto pro body e usa rota login
                 val resposta = Api.servico().login(LoginRequest(email, senha))
                 Sessao.token = resposta.token
+                Sessao.refreshToken = resposta.refreshToken
                 Sessao.nomeUsuario = resposta.usuario.nome
                 abrirMenu()
             } catch (e: Exception) {

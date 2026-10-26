@@ -111,7 +111,7 @@ object ImpressoraRede {
         // 1) Logo (opcional)
         if (logo != null && !executa(impressora) { it.printBitmap(logo) }) return false
         // 2) Texto
-        var linhas = listOf(
+        val linhas = mutableListOf(
             linha(
                 "PDV Treinamento", attrs(
                     align = PrintAttributes.VALUE_ALIGN_CENTER,
@@ -142,8 +142,7 @@ object ImpressoraRede {
 
         if (!executa(impressora) { it.printArrayTextWithAttributes(linhas) }) return false
 
-        linhas = emptyList();
-        return executa(impressora) { it.printBlankLines(6) }
+        return executa(impressora) { it.printBlankLines(5) }
 
     }
 

@@ -3,7 +3,8 @@ import android.content.Context
 import android.content.SharedPreferences
 
 
-object Sessao {
+object
+Sessao {
     private lateinit var gaveta: SharedPreferences
     fun iniciar(contexto: Context) {
         gaveta = contexto.getSharedPreferences("sessao", Context.MODE_PRIVATE)
@@ -14,6 +15,9 @@ object Sessao {
     var token: String?
         get() = gaveta.getString("token", null)
         set(valor) { gaveta.edit().putString("token", valor).apply() }
+    var refreshToken: String?
+        get() = gaveta.getString("refreshToken", null)
+        set(valor) { gaveta.edit().putString("refreshToken", valor).apply() }
     var nomeUsuario: String?
         get() = gaveta.getString("nome", "")
         set(valor) { gaveta.edit().putString("nome", valor).apply() }
@@ -29,6 +33,6 @@ object Sessao {
             gaveta.edit().putString("servidor", endereco).apply()
         }
     fun sair() {
-        gaveta.edit().remove("token").remove("nome").apply()
+        gaveta.edit().remove("token").remove("refreshToken").remove("nome").apply()
     }
 }

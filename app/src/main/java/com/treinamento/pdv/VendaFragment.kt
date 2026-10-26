@@ -1,5 +1,6 @@
 package com.treinamento.pdv
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.text.InputType
 import android.view.LayoutInflater
@@ -41,12 +42,12 @@ class VendaFragment : FragmentBase() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         titulo("Venda")
+        savedInstanceState?.getString("carrinho")?.let {
+            itensCarrinho = Gson().fromJson(it, Array<ItemCarrinho>::class.java).toMutableList()
+        }
         b.lista.layoutManager = LinearLayoutManager(requireContext())
         b.listaCarrinho.layoutManager = LinearLayoutManager(requireContext())
-
         b.prosseguir.text = "Total: ${moeda(calcularTotalCarrinho())}"
-
-
         b.buscar.setOnClickListener {
             carregar()
         }
@@ -61,6 +62,10 @@ class VendaFragment : FragmentBase() {
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("carrinho", Gson().toJson(itensCarrinho))
+    }
     private fun carregar() {
         val parametro = b.busca.text.toString().trim()
         b.progresso.visibility = View.VISIBLE
@@ -85,23 +90,24 @@ class VendaFragment : FragmentBase() {
 
         b.listaCarrinho.adapter = CarrinhoAdapter()
         if (itensCarrinho.isEmpty()) b.listaCarrinho.visibility = View.GONE else b.listaCarrinho.visibility = View.VISIBLE
-        b.carrinhoLabel.visibility = b.listaCarrinho.visibility
-        b.carrinhoLabel.setOnClickListener {
+        b.carrinhoLabel?.visibility = b.listaCarrinho.visibility
+        b.carrinhoLabel?.setOnClickListener {
             carrinhoExpandido = !carrinhoExpandido
             if (carrinhoExpandido) {
                 b.lista.visibility = View.VISIBLE
-                b.carrinhoLabel.setText("Expandir Carrinho")
+                b.carrinhoLabel?.setText("Expandir Carrinho")
             }
             else {
                 b.lista.visibility = View.GONE
-                b.carrinhoLabel.setText("Diminuir Carrinho")
+                b.carrinhoLabel?.setText("Diminuir Carrinho")
                 if (itensCarrinho.isEmpty()) {
                     b.listaCarrinho.visibility = View.GONE
                     b.lista.visibility = View.VISIBLE
                 }
             }
         }
-        b.divisorCarrinho.visibility = b.listaCarrinho.visibility
+        b.divisorCarrinho?.visibility = b.listaCarrinho.visibility
+        if (context?.resources?.configuration?.orientation == Configuration.ORIENTATION_LANDSCAPE) b.listaCarrinho.visibility = View.VISIBLE
 
         b.prosseguir.text = "Total: ${moeda(calcularTotalCarrinho())}"
     }
@@ -122,7 +128,7 @@ class VendaFragment : FragmentBase() {
         }
         val btnMais = Button(requireContext()).apply {
             text = "+"
-            layoutParams = LinearLayout.LayoutParams(80,80)
+            layoutParams = LinearLayout.LayoutParams(100,100)
         }
         btnMais.setOnClickListener {
             val atual = campo.text.toString().toIntOrNull() ?: 1
@@ -131,7 +137,7 @@ class VendaFragment : FragmentBase() {
 
         val btnMenos = Button(requireContext()).apply {
             text = "-"
-            layoutParams = LinearLayout.LayoutParams(80, 80)
+            layoutParams = LinearLayout.LayoutParams(100,100)
         }
         btnMenos.setOnClickListener {
             val atual = campo.text.toString().toIntOrNull() ?: 1
@@ -147,7 +153,7 @@ class VendaFragment : FragmentBase() {
 
         val dialogo = AlertDialog.Builder(requireContext())
             .setTitle(m.descricao)
-            .setMessage("Quantidade\nNo carrinho: $quantidade")
+            .setMessage("Quantidade\nNo carrinho: $quantidade\nQuantos quer adicionar ao carrinho?")
             .setView(layoutPrincipal)
             .setPositiveButton("Adicionar", null)
             .setNegativeButton("Cancelar", null)
@@ -241,7 +247,7 @@ class VendaFragment : FragmentBase() {
 
         val dialogo = AlertDialog.Builder(requireContext())
             .setTitle(m.descricao)
-            .setMessage("Quantidade\nNo carrinho: $quantidadeNoCarrinho")
+            .setMessage("Quantidade\nNo carrinho: $quantidadeNoCarrinho\nQuantos quer remover do carrinho?")
             .setView(layoutPrincipal)
             .setPositiveButton("Remover", null)
             .setNegativeButton("Cancelar", null)

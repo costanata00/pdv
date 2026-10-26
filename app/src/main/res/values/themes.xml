@@ -6,7 +6,10 @@
 <!--        <item name="materialButtonStyle">@style/Widget.Pdv.Button</item>-->
     </style>
 
-    <style name="Theme.Pdv" parent="Base.Theme.Pdv" />
+    <style name="Theme.Pdv" parent="Base.Theme.Pdv">
+        <item name="actionBarSize">@dimen/altura_actionbar</item>
+    </style>
+
 
     <style name="ThemeOverlay.Pdv.FullscreenContainer" parent="">
         <item name="fullscreenBackgroundColor">@color/light_blue_600</item>
