@@ -57,6 +57,19 @@
         android:hint="Estoque (ex.: 100)"
         android:inputType="number" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="URL da imagem(https):" />
+
+    <EditText
+        android:id="@+id/imagem_url"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="https://example.com"
+        android:inputType="textUri" />
+
     <Button
         android:id="@+id/salvar"
         android:layout_width="match_parent"

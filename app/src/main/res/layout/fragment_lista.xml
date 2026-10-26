@@ -49,6 +49,13 @@
         android:visibility="gone"
         android:text="Nada foi encontrado" />
 
+    <Button
+        android:id="@+id/deletar"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="Deletar inativos sem estoque"
+        android:visibility="gone" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/lista"
         android:layout_width="match_parent"

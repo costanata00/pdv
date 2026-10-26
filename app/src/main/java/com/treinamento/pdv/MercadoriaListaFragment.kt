@@ -41,15 +41,29 @@ class MercadoriaListaFragment : FragmentBase() {
         b.filtro.setOnClickListener {
             if (filtro == "todas") {
                 filtro = "ativas"
+                b.deletar.visibility= View.GONE
                 b.filtro.text = "Ativas"
             }else if (filtro == "ativas"){
                 filtro = "inativas"
+                b.deletar.visibility= View.VISIBLE
                 b.filtro.text = "Inativas"
             }else{
                 filtro = "todas"
+                b.deletar.visibility= View.GONE
                 b.filtro.text = "Todas"
             }
             carregar()
+        }
+        b.deletar.setOnClickListener {
+            viewLifecycleOwner.lifecycleScope.launch {
+                try {
+                    Api.servico().deletarSemEstoque()
+                    aviso("Mercadorias sem estoque foram deletadas")
+                    carregar()
+                } catch (e: Exception) {
+                    mostrarErro(e)
+                }
+            }
         }
     }
 
@@ -112,13 +126,15 @@ class MercadoriaListaFragment : FragmentBase() {
     }
     private fun mostrarLista() {
         val linhas = ArrayList<String>()
+        val imagens = ArrayList<String?>()
         for (m in mercadorias) {
+            imagens.add(m.imagem_url)
             var nome = m.descricao
             if (!m.ativo){
                 nome += " (Inativo)"}
             linhas.add("$nome\nCód. ${m.codigo}  ·  Estoque: ${m.estoque}\n${moeda(m.preco)}")
         }
-        b.lista.adapter = LinhaAdapter(linhas, { clicar(it) }, { segurar(it) })
+        b.lista.adapter = LinhaAdapter(linhas, { clicar(it) }, { segurar(it) }, imagens)
         if (mercadorias.isEmpty()){
             b.mensagem.visibility = View.VISIBLE
         }else{

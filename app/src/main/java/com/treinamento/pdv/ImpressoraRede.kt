@@ -129,7 +129,7 @@ object ImpressoraRede {
         for (i in venda.itens_vendas ?: emptyList()) {
             linhas += linhaDupla(
                 "${i.mercadorium?.descricao}",
-                "${moeda(i.valor_total / i.quantidade)}x${i.quantidade} =${moeda(i.valor_total)}"
+                "${moeda(i.valor_total / i.quantidade)}x${i.quantidade}=${moeda(i.valor_total)}"
             )
         }
         linhas += linha(" ")
@@ -142,7 +142,6 @@ object ImpressoraRede {
 
         if (!executa(impressora) { it.printArrayTextWithAttributes(linhas) }) return false
 
-        // 3) Avança o papel até o corte
         linhas = emptyList();
         return executa(impressora) { it.printBlankLines(6) }
 

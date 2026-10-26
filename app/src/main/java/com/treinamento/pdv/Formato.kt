@@ -7,7 +7,7 @@ import java.util.TimeZone
 
 
 fun moeda(valor: Double): String {
-    return "R$ " + String.format(Locale.forLanguageTag("pt-BR"), "%,.2f", valor)
+    return "R$" + String.format(Locale.forLanguageTag("pt-BR"), "%,.2f", valor)
 }
 
 fun dataHora(textoDaApi: String?): String {

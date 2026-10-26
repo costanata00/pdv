@@ -38,7 +38,6 @@ class MainActivity : TelaBase() {
         supportActionBar?.setDisplayHomeAsUpEnabled(temParaOndeVoltar)
     }
 
-    // Pede para a tela atual voltar (assim ela pode perguntar antes, como a VendaFragment)
     private fun voltar() {
         val atual = supportFragmentManager.findFragmentById(R.id.moldura)
         if (supportFragmentManager.backStackEntryCount > 0 && atual is FragmentBase) {

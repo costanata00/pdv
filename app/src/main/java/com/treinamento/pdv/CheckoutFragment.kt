@@ -140,11 +140,15 @@ class CheckoutFragment : FragmentBase() {
                     .setCancelable(false)
                     .setPositiveButton("Quero ") { _, _ ->
                         viewLifecycleOwner.lifecycleScope.launch {
-                            val completa = Api.servico().venda(venda.id)
-                            val ok = ImpressoraRede.imprimeVenda(requireContext(), venda = completa)
-                            if (!ok) aviso("Falha na impressão")
-                            startActivity(Intent(requireContext(), MainActivity::class.java))
-                            requireActivity().finish()
+                            try {
+                                val completa = Api.servico().venda(venda.id)
+                                val ok = ImpressoraRede.imprimeVenda(requireContext(), venda = completa)
+                                if (!ok) aviso("Falha na impressão")
+                                startActivity(Intent(requireContext(), MainActivity::class.java))
+                                requireActivity().finish()
+                            }catch (e: Exception){
+                                mostrarErro(e)
+                            }
                         }
                     }
                     .setNegativeButton("Não quero", { _, _ ->

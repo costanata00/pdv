@@ -57,7 +57,7 @@ class MercadoriaFormFragment : FragmentBase() {
         b.descricao.setText(m.descricao)
         b.preco.setText(moeda(m.preco).replace("R$", "").trim().toString())
         b.estoque.setText(m.estoque.toString())
-
+        b.imagemUrl.setText(m.imagem_url)
         b.ativar.visibility = View.VISIBLE
         b.ativar.text = if (m.ativo) "Desativar" else "Reativar"
     }
@@ -89,7 +89,7 @@ class MercadoriaFormFragment : FragmentBase() {
         val descricao = b.descricao.text.toString().trim()
         val preco = b.preco.text.toString().replace(",", ".").toDoubleOrNull()
         val estoque = b.estoque.text.toString().toIntOrNull()
-
+        val imagem_url = b.imagemUrl.text.toString().trim()
         if (codigo.isEmpty() || descricao.isEmpty()) {
             aviso("Informe o código e a descrição.")
             return null
@@ -102,7 +102,7 @@ class MercadoriaFormFragment : FragmentBase() {
             aviso("Informe o estoque.")
             return null
         }
-        return MercadoriaBody(codigo, descricao, preco, estoque)
+        return MercadoriaBody(codigo, descricao, preco, estoque, imagem_url)
     }
 
     private fun confirmarMudancaAtivo() {

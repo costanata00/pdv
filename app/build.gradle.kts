@@ -51,5 +51,7 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation("androidx.fragment:fragment-ktx:1.8.2")
     implementation(files("libs/smartrede-sdk-l400-4.3.28.release.aar"))
+    implementation("io.coil-kt:coil:2.7.0")
+
 }
 

@@ -34,14 +34,16 @@ data class Mercadoria(
     val descricao: String,
     val preco: Double,
     val estoque: Int,
-    val ativo: Boolean
+    val ativo: Boolean,
+    val imagem_url: String?
 )
 
 data class MercadoriaBody(
     val codigo: String,
     val descricao: String,
     val preco: Double,
-    val estoque: Int
+    val estoque: Int,
+    val imagem_url: String?
 )
 
 //Clientes
@@ -78,7 +80,7 @@ data class Venda(
     val cliente_id: Int?,
     val valor_total: Double,
     val data_venda: String?,
-    val status: String?,
+    var status: String?,
     val pago: Boolean,
     val forma_pag: String?,
     val cliente: Cliente?,

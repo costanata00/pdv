@@ -82,14 +82,15 @@ class VendaDetalhesFragment : FragmentBase() {
         }
         b.vendaID.text = "Venda #${v.id}"
         b.cliente.text = "Cliente: ${v.cliente?.nome ?: "Não informado"}"
-
         b.total.text = "Total: ${moeda(v.valor_total)}"
         b.status.text = "Status: ${v.status?.uppercase() ?: "Não informado"}"
         b.formaPag.text ="Pagamento: ${v.forma_pag?.uppercase() ?: "Não informado"}"
+        b.usuario.text = "Usuário: ${v.usuario?.nome ?: "Não informado"}"
+        b.dataHora.text = "Data: ${dataHora(v.data_venda)}"
     }
-
-
-
-
-
 }
+
+
+
+
+

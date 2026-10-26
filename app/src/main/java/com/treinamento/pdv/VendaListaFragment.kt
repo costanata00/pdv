@@ -70,6 +70,20 @@ class VendaListaFragment : FragmentBase() {
                     try {
                         Api.servico().cancelarVenda(v.id)
                         aviso("Cancelada")
+                        AlertDialog.Builder(requireContext())
+                            .setPositiveButton("Imprimir a nota" ) { _, _ ->
+                                viewLifecycleOwner.lifecycleScope.launch {
+                                    try {
+                                        val v = Api.servico().venda(v.id)
+                                        val ok = ImpressoraRede.imprimeVenda(requireContext(), venda = v)
+                                    if (!ok) aviso("Falha na impressão")
+                                    }catch (e : Exception){
+                                        mostrarErro(e)
+                                    }
+                                }
+                            }.setNegativeButton("Sair", null)
+                            .create()
+                            .show()
                         carregar()
                     } catch (e: Exception) {
                         mostrarErro(e)
