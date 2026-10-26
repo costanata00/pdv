@@ -74,7 +74,6 @@ interface ApiService {
 }
 
 object Api {
-    private val trava = Any()
 
     private val http = OkHttpClient.Builder()
         .connectTimeout(8, TimeUnit.SECONDS)
@@ -87,37 +86,21 @@ object Api {
             }
             cadeia.proceed(pedido.build())
         }
-        // Quando a resposta for 401, renova o token e repete o pedido
         .authenticator { _, resposta -> renovarToken(resposta) }
         .build()
 
     private fun renovarToken(resposta: Response): Request? {
-        val caminho = resposta.request.url.encodedPath
-        if (caminho.endsWith("auth/login") || caminho.endsWith("auth/refresh")) return null
-        if (resposta.priorResponse != null) return null //
-
-        // so uma thread renova por vez; as outras esperam e usam o token novo
-        synchronized(trava) {
-            val tokenUsado = resposta.request.header("Authorization")?.removePrefix("Bearer ")
-            val atual = Sessao.token
-            if (atual != null && atual != tokenUsado) {
-                return resposta.request.newBuilder().header("Authorization", "Bearer $atual").build()
-            }
-
-            val refresh = Sessao.refreshToken ?: return null
-            val nova = try {
-                servico().refresh(RefreshBody(refresh)).execute()
-            } catch (e: IOException) {
-                return null
-            }
-            val corpo = nova.body()
-            if (!nova.isSuccessful || corpo == null) return null
-
-            // nao chama Sessao.sair() aqui: o TelaBase so manda pro login se ainda houver token
-            Sessao.token = corpo.token
-            Sessao.refreshToken = corpo.refreshToken
-            return resposta.request.newBuilder().header("Authorization", "Bearer ${corpo.token}").build()
-        }
+        // nao renova o proprio login/refresh, e so tenta uma vez por pedido
+        if (resposta.request.url.encodedPath.contains("auth/") || resposta.priorResponse != null) return null
+        val refresh = Sessao.refreshToken ?: return null
+        val corpo = try {
+            servico().refresh(RefreshBody(refresh)).execute().body()
+        } catch (e: IOException) {
+            null
+        } ?: return null
+        Sessao.token = corpo.token
+        Sessao.refreshToken = corpo.refreshToken
+        return resposta.request.newBuilder().header("Authorization", "Bearer ${corpo.token}").build()
     }
 
     fun servico(): ApiService {
