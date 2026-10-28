@@ -339,6 +339,9 @@ class VendaFragment : FragmentBase() {
             item.root.setOnClickListener {
                 perguntarAdicionarQuantidade(m)
             }
+            item.nomeItem.setOnClickListener {
+                perguntarAdicionarQuantidade(m)
+            }
         }
     }
 

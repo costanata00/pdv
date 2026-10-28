@@ -61,6 +61,9 @@ interface ApiService {
     @GET("vendas")
     suspend fun vendas(@Query("busca") busca: String): List<Venda>
 
+    @GET("vendas")
+    suspend fun vendas(): List<Venda>
+
     @GET("vendas/{id}")
     suspend fun venda(@Path("id") id: Int): Venda
 
@@ -90,7 +93,6 @@ object Api {
         .build()
 
     private fun renovarToken(resposta: Response): Request? {
-        // nao renova o proprio login/refresh, e so tenta uma vez por pedido
         if (resposta.request.url.encodedPath.contains("auth/") || resposta.priorResponse != null) return null
         val refresh = Sessao.refreshToken ?: return null
         val corpo = try {

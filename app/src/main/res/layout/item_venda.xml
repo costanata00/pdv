@@ -21,6 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1.3"
         android:textSize="16sp"
+        android:textStyle="bold"
         android:maxLines="2"
         android:ellipsize="end"
         tools:text="Descrição da mercadoria" />
@@ -31,6 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:textSize="16sp"
+        android:textStyle="bold"
         tools:text="R$ 99,99" />
 
     <TextView
@@ -38,7 +40,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.7"
-        android:paddingHorizontal="5dp"
+        android:paddingHorizontal="7dp"
         android:textSize="16sp"
         tools:text="Estoque: 100" />
 

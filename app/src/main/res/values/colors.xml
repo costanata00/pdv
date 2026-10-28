@@ -7,6 +7,7 @@
     <color name="light_blue_A200">#FF40C4FF</color>
     <color name="light_blue_A400">#FF00B0FF</color>
     <color name="black_overlay">#66000000</color>
-    <color name="botao_fundo">#FFA500</color>
+    <color name="botao_fundo">#FF9900</color>
     <color name="botao_texto">#FFFFFFFF</color>
+    <color name="fundo_toolbar">#FF000000</color>"
 </resources>

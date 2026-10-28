@@ -1,88 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:padding="16dp">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="Código:" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/codigo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="P000"
-        android:inputType="textCapCharacters" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Código:" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="Descrição:" />
+        <EditText
+            android:id="@+id/codigo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="P000"
+            android:inputType="textCapCharacters" />
 
-    <EditText
-        android:id="@+id/descricao"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Pão de Forma"
-        android:inputType="text" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Descrição:" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="Preço R$:" />
+        <EditText
+            android:id="@+id/descricao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Pão de Forma"
+            android:inputType="text" />
 
-    <EditText
-        android:id="@+id/preco"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="ex.: 10.99"
-        android:inputType="numberDecimal" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Preço R$:" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="Estoque:" />
+        <EditText
+            android:id="@+id/preco"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="ex.: 10.99"
+            android:inputType="numberDecimal" />
 
-    <EditText
-        android:id="@+id/estoque"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Estoque (ex.: 100)"
-        android:inputType="number" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Estoque:" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="URL da imagem(https):" />
+        <EditText
+            android:id="@+id/estoque"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Estoque (ex.: 100)"
+            android:inputType="number" />
 
-    <EditText
-        android:id="@+id/imagem_url"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="https://example.com"
-        android:inputType="textUri" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="URL da imagem(https):" />
 
-    <Button
-        android:id="@+id/salvar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Salvar" />
+        <EditText
+            android:id="@+id/imagem_url"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="https://example.com"
+            android:inputType="textUri" />
 
-    <Button
-        android:id="@+id/ativar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Desativar"
-        android:visibility="gone" />
+        <Button
+            android:id="@+id/salvar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Salvar" />
 
-</LinearLayout>
+        <Button
+            android:id="@+id/ativar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Desativar"
+            android:visibility="gone" />
+
+    </LinearLayout>
+</ScrollView>

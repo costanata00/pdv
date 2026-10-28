@@ -107,6 +107,7 @@ class VendaListaFragment : FragmentBase() {
     private fun carregar() {
         val parametro = b.busca.text.toString().trim()
         b.progresso.visibility = View.VISIBLE
+        b.progresso.visibility = View.VISIBLE
         b.mensagem.visibility = View.GONE
 
         viewLifecycleOwner.lifecycleScope.launch {

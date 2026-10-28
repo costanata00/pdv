@@ -2,6 +2,8 @@ package com.treinamento.pdv
 
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 
 class MainActivity : TelaBase() {
@@ -9,6 +11,13 @@ class MainActivity : TelaBase() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setSupportActionBar(findViewById(R.id.barra))
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.raiz)) { v, insets ->
+            val barras = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(barras.left, barras.top, barras.right, barras.bottom)
+            insets
+        }
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()

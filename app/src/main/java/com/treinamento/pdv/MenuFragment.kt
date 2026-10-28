@@ -27,6 +27,7 @@ class MenuFragment : FragmentBase() {
         b.novaVenda.setOnClickListener   { abrir(VendaFragment())          }
         b.historico.setOnClickListener   { abrir(VendaListaFragment())     }
         b.cadastrar.setOnClickListener   { abrir(UsuarioFormFragment())    }
+        b.dashboard.setOnClickListener   { abrir(DashboardFragment())    }
         b.sair.setOnClickListener {
             Sessao.sair()
             startActivity(Intent(requireContext(), LoginActivity::class.java))

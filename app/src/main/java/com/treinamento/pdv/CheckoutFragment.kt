@@ -7,11 +7,11 @@ import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.treinamento.pdv.data.Api
 import com.treinamento.pdv.data.Cliente
@@ -39,6 +39,7 @@ class CheckoutFragment : FragmentBase() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         titulo("Check-out")
+        b.lista.layoutManager = LinearLayoutManager(requireContext())
 
         val jsonCliente = arguments?.getString("cliente")
         if (jsonCliente != null) {
@@ -60,10 +61,10 @@ class CheckoutFragment : FragmentBase() {
         for (item in itens) {
             val m = item.mercadoria
             val subtotal = m.preco * item.quantidade
-            linhas.add("${m.descricao} x${item.quantidade} = ${moeda(subtotal)}")
+            linhas.add("${m.descricao} x${item.quantidade} \n   ${moeda(subtotal)}")
 
         }
-        b.lista.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, linhas)
+        b.lista.adapter = LinhaAdapter(linhas)
         b.total.text = "Total: ${moeda(calcularTotal())}"
         b.cliente.text = cliente?.nome ?: "Cliente não selecionado"
 
