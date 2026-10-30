@@ -21,8 +21,11 @@ Sessao {
     var nomeUsuario: String?
         get() = gaveta.getString("nome", "")
         set(valor) { gaveta.edit().putString("nome", valor).apply() }
+    // saldo em dinheiro na gaveta (SharedPreferences nao guarda Double, entao vai como bits num Long)
+    var caixa: Double
+        get() = Double.fromBits(gaveta.getLong("saldoCaixa", 0.0.toRawBits()))
+        set(valor) { gaveta.edit().putLong("saldoCaixa", valor.toRawBits()).apply() }
 
-    //o servidor salvo no login
     var servidor: String
         get() = gaveta.getString("servidor", null) ?: "http://127.0.0.1:3000/"
         set(valor) {

@@ -1,6 +1,9 @@
 package com.treinamento.pdv
+
+import android.R
 import android.content.Context
 import android.graphics.Bitmap
+import com.treinamento.pdv.data.Sessao
 import com.treinamento.pdv.data.Venda
 import kotlinx.coroutines.*
 import rede.smartrede.commons.callback.IPrinterCallback
@@ -8,9 +11,14 @@ import rede.smartrede.commons.contract.IConnectorPrinter
 import rede.smartrede.commons.printer.PrintAttributes
 import rede.smartrede.sdk.api.IRedeSdk
 import rede.smartrede.sdk.api.RedeSdk
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import kotlin.coroutines.resume
+
 object ImpressoraRede {
     private var sdk: IRedeSdk? = null
+
     /** O SDK só aceita um newInstance por processo */
     private fun obtemSdk(context: Context): IRedeSdk? {
         sdk?.let { return it }
@@ -21,8 +29,10 @@ object ImpressoraRede {
             runCatching { RedeSdk() }.getOrNull()?.also { sdk = it }
         }
     }
+
     private fun obtemImpressora(context: Context): IConnectorPrinter? =
         obtemSdk(context)?.getTerminalFunctions()?.getConnectorPrinter()
+
     /** Envia um comando e espera o callback da impressora (com timeout) */
     private suspend fun executa(
         impressora: IConnectorPrinter,
@@ -32,8 +42,13 @@ object ImpressoraRede {
             suspendCancellableCoroutine { cont ->
                 try {
                     impressora.setPrinterCallback(object : IPrinterCallback {
-                        override fun onCompleted() { if (cont.isActive) cont.resume(true) }
-                        override fun onError(erro: String) { if (cont.isActive) cont.resume(false) }
+                        override fun onCompleted() {
+                            if (cont.isActive) cont.resume(true)
+                        }
+
+                        override fun onError(erro: String) {
+                            if (cont.isActive) cont.resume(false)
+                        }
                     })
                     comando(impressora)
                 } catch (e: Exception) {
@@ -42,6 +57,7 @@ object ImpressoraRede {
             }
         } ?: false
     }
+
     private fun attrs(
         align: Int = PrintAttributes.VALUE_ALIGN_LEFT,
         tamanho: Int = 20,
@@ -53,9 +69,11 @@ object ImpressoraRede {
         PrintAttributes.KEY_TYPEFACE to fonte,
         PrintAttributes.KEY_WEIGHT to peso
     )
+
     /** Uma coluna */
     private fun linha(texto: String, a: Map<String, Int> = attrs()) =
         Pair(arrayOf(texto.ifBlank { " " }), listOf(a))   // nunca string vazia!
+
     /** Duas colunas: rótulo à esquerda, valor à direita */
     private fun linhaDupla(esq: String, dir: String) = Pair(
         arrayOf(esq.ifBlank { " " }, dir.ifBlank { " " }),
@@ -64,17 +82,20 @@ object ImpressoraRede {
             attrs(align = PrintAttributes.VALUE_ALIGN_RIGHT, peso = 1)
         )
     )
+
     suspend fun imprimeCupom(context: Context, logo: Bitmap? = null): Boolean {
         val impressora = obtemImpressora(context) ?: return false
         // 1) Logo (opcional)
         if (logo != null && !executa(impressora) { it.printBitmap(logo) }) return false
         // 2) Texto
         val linhas = listOf(
-            linha("MINHA LOJA", attrs(
-                align = PrintAttributes.VALUE_ALIGN_CENTER,
-                tamanho = 28,
-                fonte = PrintAttributes.VALUE_TYPEFACE_BOLD
-            )),
+            linha(
+                "MINHA LOJA", attrs(
+                    align = PrintAttributes.VALUE_ALIGN_CENTER,
+                    tamanho = 28,
+                    fonte = PrintAttributes.VALUE_TYPEFACE_BOLD
+                )
+            ),
             linha(" "),
             linhaDupla("Produto A", "R$ 10,00"),
             linhaDupla("Produto B", "R$ 5,50"),
@@ -87,6 +108,7 @@ object ImpressoraRede {
         // 3) Avança o papel até o corte
         return executa(impressora) { it.printBlankLines(4) }
     }
+
     /** Imprime um texto puro (ex.: comprovante devolvido pelo SDK), linha a linha */
     suspend fun imprimeTexto(context: Context, texto: String): Boolean {
         val impressora = obtemImpressora(context) ?: return false
@@ -96,7 +118,7 @@ object ImpressoraRede {
 
     private suspend fun acorda(impressora: IConnectorPrinter): Boolean {
         var i = 0
-        while(i<10) {
+        while (i < 10) {
             if (executa(impressora) { it.printArrayTextWithAttributes(listOf(linha(" "))) }) return true
             delay(300)
             i++
@@ -120,7 +142,7 @@ object ImpressoraRede {
                 )
             ),
         )
-        linhas += linha("Venda #"+venda.id, attrs(align = PrintAttributes.VALUE_ALIGN_CENTER))
+        linhas += linha("Venda #" + venda.id, attrs(align = PrintAttributes.VALUE_ALIGN_CENTER))
         linhas += linha(" ")
         linhas += linhaDupla(dataHora(venda.data_venda), "Pagamento: ${venda.forma_pag}")
         linhas += linha("Status: ${venda.status?.uppercase()}")
@@ -146,7 +168,45 @@ object ImpressoraRede {
 
     }
 
+    suspend fun imprimeComprovante(
+        context: Context,
+        logo: Bitmap? = null,
+        tipo: String,
+        valor: Double,
+        saldo: Double
+    ): Boolean {
+        val impressora = obtemImpressora(context) ?: return false
+        if (!acorda(impressora)) return false
 
+        // 1) Logo (opcional)
+//        if (logo != null && !executa(impressora) { it.printBitmap(logo) }) return false
+        // 2) Texto
+        val titulo = attrs(
+            align = PrintAttributes.VALUE_ALIGN_CENTER,
+            tamanho = 28,
+            fonte = PrintAttributes.VALUE_TYPEFACE_BOLD
+        )
+        val linhas = mutableListOf(linha("PDV Treinamento", titulo))
+        linhas += linha(
+            "COMPROVANTE DE ${tipo.uppercase()}",
+            attrs(PrintAttributes.VALUE_ALIGN_CENTER, fonte = PrintAttributes.VALUE_TYPEFACE_BOLD)
+        )
+        linhas += linha(" ")
+        val agora =
+            SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.forLanguageTag("pt-BR")).format(Date())
+        linhas += linha(agora, attrs(align = PrintAttributes.VALUE_ALIGN_CENTER))
+        linhas += linha("----------------------------------------------------------------")
+        linhas += linhaDupla("Operador:", Sessao.nomeUsuario ?: "")
+        // suprimento somou no caixa, sangria tirou
+        val saldoAnterior = if (tipo == "Sangria") saldo + valor else saldo - valor
+        linhas += linhaDupla("Saldo anterior:", moeda(saldoAnterior))
+        linhas += linhaDupla("Valor de $tipo:", moeda(valor))
+        linhas += linhaDupla("Saldo agora:", moeda(saldo))
+
+        if (!executa(impressora) { it.printArrayTextWithAttributes(linhas) }) return false
+
+        return executa(impressora) { it.printBlankLines(5) }
+    }
 
 }
 

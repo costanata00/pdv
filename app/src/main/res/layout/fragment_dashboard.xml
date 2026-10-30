@@ -44,7 +44,7 @@
                 android:text="Faturado: R$ 0,00"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:textColor="#2E7D32" />
+                android:textColor="#008000" />
         </LinearLayout>
 
         <LinearLayout
@@ -59,7 +59,7 @@
                 android:layout_height="wrap_content"
                 android:text="Vendas Canceladas: 0"
                 android:textSize="15sp"
-                android:textColor="#C62828" />
+                android:textColor="#FF0000" />
         </LinearLayout>
 
         <View
@@ -115,13 +115,28 @@
             android:background="?android:attr/dividerVertical"
             android:layout_marginBottom="16dp" />
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Saída de Estoque"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="12dp" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="12dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Saída de Estoque"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/ordem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Por valor"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+        </LinearLayout>
 
         <ProgressBar
             android:id="@+id/progresso"

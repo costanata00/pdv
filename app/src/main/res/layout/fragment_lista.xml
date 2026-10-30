@@ -63,6 +63,13 @@
         android:layout_weight="1" />
 
     <Button
+        android:id="@+id/cadastrarCliente"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="+ Cadastrar cliente +"
+        android:visibility="gone" />
+
+    <Button
         android:id="@+id/novo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

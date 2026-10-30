@@ -68,12 +68,16 @@ class ClienteListaFragment : FragmentBase() {
                 tela.arguments = bundleOf("carrinho" to json)
                 abrir(tela)
             }
+            b.cadastrarCliente.visibility = View.VISIBLE
+            b.cadastrarCliente.setOnClickListener {
+                val form = ClienteFormFragment()
+                form.arguments = bundleOf("carrinho" to json)
+                abrir(form)
+            }
         }
 
 
     }
-
-    //toque na linha: se veio do carrinho, escolhe o cliente da venda; senão, abre para editar
     private fun clicar(posicao: Int) {
         val json = arguments?.getString("carrinho")
         if (json != null) {

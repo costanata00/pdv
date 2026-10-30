@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://android.com"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:background="?attr/colorSurface">
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,95 +12,211 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <TextView
-            android:id="@+id/saudacao"
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="24dp"
-            tools:text="Olá, Nome do Usuário" />
+            android:layout_marginBottom="16dp"
+            app:cardBackgroundColor="?attr/colorPrimary">
 
-        <Button
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:id="@+id/saudacao"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnPrimary"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    tools:text="Olá, Nome do Usuário" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Saldo neste caixa"
+                    android:textColor="?attr/colorOnPrimary"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/saldoCaixa"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnPrimary"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    tools:text="R$1.250,00" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/novaVenda"
             android:layout_width="match_parent"
             android:layout_height="64dp"
+            android:layout_marginBottom="20dp"
             android:text="Nova Venda"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="12dp" />
+            android:textStyle="bold" />
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="12dp">
+            android:layout_marginBottom="12dp"
+            android:orientation="horizontal">
 
-            <Button
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/mercadorias"
                 android:layout_width="0dp"
-                android:layout_height="56dp"
-                android:layout_weight="1"
+                android:layout_height="96dp"
                 android:layout_marginEnd="6dp"
-                android:text="Mercadorias"
-                android:textSize="15sp" />
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardCornerRadius="20dp">
 
-            <Button
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Mercadorias"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/clientes"
                 android:layout_width="0dp"
-                android:layout_height="56dp"
-                android:layout_weight="1"
+                android:layout_height="96dp"
                 android:layout_marginStart="6dp"
-                android:text="Clientes"
-                android:textSize="15sp" />
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardCornerRadius="20dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Clientes"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="15sp"
+                    android:layout_gravity="center"
+                    android:textStyle="bold" />
+            </com.google.android.material.card.MaterialCardView>
+
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="12dp">
+            android:layout_marginBottom="12dp"
+            android:orientation="horizontal">
 
-            <Button
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/historico"
                 android:layout_width="0dp"
-                android:layout_height="56dp"
-                android:layout_weight="1"
+                android:layout_height="96dp"
                 android:layout_marginEnd="6dp"
-                android:text="Histórico"
-                android:textSize="15sp" />
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardCornerRadius="20dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Histórico de Vendas"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="15sp"
+                    android:layout_gravity="center"
+                    android:textStyle="bold" />
+            </com.google.android.material.card.MaterialCardView>
 
-            <Button
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/dashboard"
                 android:layout_width="0dp"
-                android:layout_height="56dp"
-                android:layout_weight="1"
+                android:layout_height="96dp"
                 android:layout_marginStart="6dp"
-                android:text="Dashboard"
-                android:textSize="15sp" />
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardCornerRadius="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Dashboard"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="15sp"
+                    android:layout_gravity="center"
+                    android:textStyle="bold" />
+            </com.google.android.material.card.MaterialCardView>
+
         </LinearLayout>
 
-        <Button
-            android:id="@+id/cadastrar"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="Cadastrar Usuário"
-            android:textSize="15sp"
-            android:layout_marginBottom="16dp" />
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/caixa"
+                android:layout_width="0dp"
+                android:layout_height="96dp"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardCornerRadius="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Suprimento/Sangria"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="15sp"
+                    android:layout_gravity="center"
+                    android:textStyle="bold" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cadastrar"
+                android:layout_width="0dp"
+                android:layout_height="96dp"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardCornerRadius="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Novo Usuário"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="15sp"
+                    android:layout_gravity="center"
+                    android:textStyle="bold" />
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/sair"
+            style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="12dp"
             android:text="Sair da Conta"
-            android:textColor="#C62828"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+            android:textColor="?attr/colorError" />
 
     </LinearLayout>
 </ScrollView>

@@ -16,6 +16,7 @@ import java.time.format.DateTimeFormatter
 
 class DashboardFragment : FragmentBase() {
     private var filtro = "hoje"
+    private var ordem = "valor"
     private var _b: FragmentDashboardBinding? = null
     private val b get() = _b!!
     private var vendas: List<Venda> = ArrayList();
@@ -47,6 +48,18 @@ class DashboardFragment : FragmentBase() {
                 b.filtro.text = "Hoje"
             }
             carregar()
+        }
+
+        // ordena a saída de estoque pelo valor total ou pela quantidade vendida
+        b.ordem.setOnClickListener {
+            if (ordem == "valor") {
+                ordem = "quantidade"
+                b.ordem.text = "Por quantidade"
+            } else {
+                ordem = "valor"
+                b.ordem.text = "Por valor"
+            }
+            mostrarLista()
         }
     }
 
@@ -99,7 +112,10 @@ class DashboardFragment : FragmentBase() {
             .flatMap { it.itens_vendas ?: emptyList() }
             .groupBy { it.mercadoria_id }
             .values
-            .sortedByDescending { itens -> itens.sumOf { it.valor_total } }
+            .sortedByDescending { itens ->
+                if (ordem == "quantidade") itens.sumOf { it.quantidade }.toDouble()
+                else itens.sumOf { it.valor_total }
+            }
 
         val linhas = ArrayList<String>()
         for (itens in vendidos) {
@@ -116,15 +132,15 @@ class DashboardFragment : FragmentBase() {
         b.totalFaturado.text =
             "Valor Total Faturado: ${moeda(finalizadas.sumOf { it.valor_total })}"
         b.vendasCanceladas.text = "Vendas Canceladas: ${vendas.count { it.status == "cancelada" }}"
-        b.vendasDinheiro.text = "Dinheiro: ${
+        b.vendasDinheiro.text = "Dinheiro:\n${
             moeda(finalizadas.filter { it.forma_pag == "Dinheiro" }.sumOf { it.valor_total })
         }"
-        b.vendasCartao.text = "Cartão: ${
+        b.vendasCartao.text = "Cartão:\n${
             moeda(finalizadas.filter { it.forma_pag == "Cartão de Crédito" || it.forma_pag == "Cartão" }
                 .sumOf { it.valor_total })
         }"
         b.vendasPix.text =
-            "Pix: ${moeda(finalizadas.filter { it.forma_pag == "PIX" }.sumOf { it.valor_total })}"
+            "Pix:\n${moeda(finalizadas.filter { it.forma_pag == "PIX" }.sumOf { it.valor_total })}"
     }
 
 

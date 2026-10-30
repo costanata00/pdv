@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
 import com.treinamento.pdv.data.Api
@@ -77,8 +78,17 @@ class ClienteFormFragment : FragmentBase() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val m = cliente
+                val carrinho = arguments?.getString("carrinho")
                 if (m == null) {
-                    Api.servico().criarCliente(dados)
+                    val novo = Api.servico().criarCliente(dados)
+                    if (carrinho != null) {
+                        aviso("Cliente salvo.")
+                        voltar()
+                        val tela = CheckoutFragment()
+                        tela.arguments = bundleOf("carrinho" to carrinho, "cliente" to Gson().toJson(novo))
+                        abrir(tela)
+                        return@launch
+                    }
                 } else {
                     Api.servico().alterarCliente(m.id, dados)
                 }

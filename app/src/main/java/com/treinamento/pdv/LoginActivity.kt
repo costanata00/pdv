@@ -11,13 +11,10 @@ import com.treinamento.pdv.databinding.ActivityLoginBinding
 import kotlinx.coroutines.launch
 
 class LoginActivity : TelaBase() {
-    //binding serve para ligar o arquivo xml ao codigo
     private lateinit var binding: ActivityLoginBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        //checa se tem token
         if (Sessao.token != null) {
             abrirMenu()
             return
@@ -25,9 +22,7 @@ class LoginActivity : TelaBase() {
 
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         binding.servidor.setText(Sessao.servidor)
-
         binding.entrar.setOnClickListener {
             entrar()
         }

@@ -21,11 +21,9 @@ interface ApiService {
     @POST("auth/login")
     suspend fun login(@Body dados: LoginRequest): LoginResponse
 
-    // nao e suspend: o Authenticator do OkHttp roda de forma sincrona
     @POST("auth/refresh")
     fun refresh(@Body dados: RefreshBody): Call<RefreshResponse>
 
-    //Mercadorias
     @GET("mercadorias")
     suspend fun mercadorias(@Query("busca") busca: String): List<Mercadoria>
 
@@ -41,7 +39,7 @@ interface ApiService {
     @DELETE("mercadorias/noStock")
     suspend fun deletarSemEstoque()
 
-    //Clientes
+
     @GET("clientes")
     suspend fun clientes(@Query("busca") busca: String): List<Cliente>
 
@@ -54,7 +52,7 @@ interface ApiService {
     @PUT("clientes/{id}")
     suspend fun mudarAtivoCliente(@Path("id") id: Int, @Body dados: AtivoBody): Cliente
 
-    //Vendas
+
     @POST("vendas")
     suspend fun criarVenda(@Body dados: VendaBody): Venda
 
@@ -84,13 +82,22 @@ object Api {
         .addInterceptor { cadeia ->
             val pedido = cadeia.request().newBuilder()
             val token = Sessao.token
-            if (token != null) {
+            if (Sessao.token != null) {
                 pedido.header("Authorization", "Bearer " + token)
             }
             cadeia.proceed(pedido.build())
         }
         .authenticator { _, resposta -> renovarToken(resposta) }
         .build()
+
+    fun servico(): ApiService {
+        return Retrofit.Builder()
+            .baseUrl(Sessao.servidor)
+            .client(http)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(ApiService::class.java)
+    }
 
     private fun renovarToken(resposta: Response): Request? {
         if (resposta.request.url.encodedPath.contains("auth/") || resposta.priorResponse != null) return null
@@ -103,14 +110,5 @@ object Api {
         Sessao.token = corpo.token
         Sessao.refreshToken = corpo.refreshToken
         return resposta.request.newBuilder().header("Authorization", "Bearer ${corpo.token}").build()
-    }
-
-    fun servico(): ApiService {
-        return Retrofit.Builder()
-            .baseUrl(Sessao.servidor)
-            .client(http)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(ApiService::class.java)
     }
 }

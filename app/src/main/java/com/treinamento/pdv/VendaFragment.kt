@@ -218,8 +218,8 @@ class VendaFragment : FragmentBase() {
         val btnMais = Button(requireContext()).apply {
             text = "+"
             layoutParams = LinearLayout.LayoutParams(
-                80,
-                80
+                100,
+                100
             )
         }
         btnMais.setOnClickListener {
@@ -231,8 +231,8 @@ class VendaFragment : FragmentBase() {
         val btnMenos = Button(requireContext()).apply {
             text = "-"
             layoutParams = LinearLayout.LayoutParams(
-                (48 * resources.displayMetrics.density).toInt(),
-                (48 * resources.displayMetrics.density).toInt()
+                100,
+                100
             )
         }
         btnMenos.setOnClickListener {

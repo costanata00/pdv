@@ -30,8 +30,8 @@ class LinhaAdapter(
         } else {
             linha.b.imagemItem.visibility = View.VISIBLE
             linha.b.imagemItem.load(imagens[posicao]) {
-                placeholder(R.drawable.ic_launcher_foreground)
-                error(R.drawable.ic_launcher_foreground)
+                placeholder(R.drawable.img)
+                error(R.drawable.img)
             }
         }
         linha.b.root.setOnClickListener { aoClicar(linha.bindingAdapterPosition) }

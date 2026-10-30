@@ -1,7 +1,10 @@
 package com.treinamento.pdv
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.text.InputType
 import android.view.LayoutInflater
@@ -31,7 +34,11 @@ class CheckoutFragment : FragmentBase() {
     private var _b: FragmentCheckoutBinding? = null
     private val b get() = _b!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _b = FragmentCheckoutBinding.inflate(inflater, container, false)
         return b.root
     }
@@ -55,6 +62,7 @@ class CheckoutFragment : FragmentBase() {
         }
 
     }
+
     private fun mostrarLista() {
         val itens = carrinho ?: emptyList()
         val linhas = ArrayList<String>()
@@ -78,7 +86,7 @@ class CheckoutFragment : FragmentBase() {
         return total
     }
 
-    private fun finalizarVenda(){
+    private fun finalizarVenda() {
         val rg = view?.findViewById<RadioGroup>(R.id.rgPagamento) ?: return
         val pagamento = when (rg.checkedRadioButtonId) {
             R.id.rbDinheiro -> "Dinheiro"
@@ -103,7 +111,7 @@ class CheckoutFragment : FragmentBase() {
 
         val dialogo = AlertDialog.Builder(requireContext())
             .setTitle("Pagamento em dinheiro")
-            .setMessage("Total: ${moeda(total)}\nValor recebido:")
+            .setMessage("Total: ${moeda(total)}\nValor recebido em R$:")
             .setView(campoDinheiro)
             .setPositiveButton("Confirmar", null)
             .setNegativeButton("Cancelar", null)
@@ -114,6 +122,8 @@ class CheckoutFragment : FragmentBase() {
                 val recebido = campoDinheiro.text.toString().replace(",", ".").toDoubleOrNull()
                 if (recebido == null || recebido < total) {
                     campoDinheiro.error = "Valor menor que o total"
+                } else if (recebido - total > Sessao.caixa) {
+                    campoDinheiro.error = "Sem troco no caixa (${moeda(Sessao.caixa)}). Faça um suprimento."
                 } else {
                     dialogo.dismiss()
                     enviarVenda("Dinheiro", recebido - total)
@@ -133,6 +143,8 @@ class CheckoutFragment : FragmentBase() {
                 } ?: emptyList()
                 val vendaBody = VendaBody(cliente?.id, pagamento, true, carrinho)
                 val venda = Api.servico().criarVenda(vendaBody)
+                // entra na gaveta o recebido e sai o troco, ou seja, o total da venda
+                if (pagamento == "Dinheiro") Sessao.caixa += calcularTotal()
                 b.progresso.visibility = View.GONE
                 var mensagem = "Venda Finalizada"
                 if (pagamento == "Dinheiro") mensagem += "\nTroco: ${moeda(troco)}"
@@ -143,11 +155,21 @@ class CheckoutFragment : FragmentBase() {
                         viewLifecycleOwner.lifecycleScope.launch {
                             try {
                                 val completa = Api.servico().venda(venda.id)
-                                val ok = ImpressoraRede.imprimeVenda(requireContext(), venda = completa)
+                                fun loadBitmapFromResources(context: Context, resId: Int): Bitmap? {
+                                    return BitmapFactory.decodeResource(context.resources, resId)
+                                }
+                                val ok = ImpressoraRede.imprimeVenda(
+                                    requireContext(),
+                                    venda = completa,
+                                    logo = loadBitmapFromResources(
+                                        requireContext(),
+                                        R.drawable.logobmp
+                                    )
+                                )
                                 if (!ok) aviso("Falha na impressão")
                                 startActivity(Intent(requireContext(), MainActivity::class.java))
                                 requireActivity().finish()
-                            }catch (e: Exception){
+                            } catch (e: Exception) {
                                 mostrarErro(e)
                             }
                         }
@@ -166,11 +188,11 @@ class CheckoutFragment : FragmentBase() {
         }
 
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _b = null
     }
-
 
 
 }

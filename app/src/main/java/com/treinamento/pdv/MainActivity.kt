@@ -35,6 +35,7 @@ class MainActivity : TelaBase() {
             }
         })
     }
+
     fun abrir(tela: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.moldura, tela)
@@ -43,14 +44,13 @@ class MainActivity : TelaBase() {
     }
 
     private fun atualizarSeta() {
-        val temParaOndeVoltar = supportFragmentManager.backStackEntryCount > 0
-        supportActionBar?.setDisplayHomeAsUpEnabled(temParaOndeVoltar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(supportFragmentManager.backStackEntryCount > 0)
     }
 
     private fun voltar() {
-        val atual = supportFragmentManager.findFragmentById(R.id.moldura)
-        if (supportFragmentManager.backStackEntryCount > 0 && atual is FragmentBase) {
-            atual.voltar()
+        val moldura = supportFragmentManager.findFragmentById(R.id.moldura)
+        if (supportFragmentManager.backStackEntryCount > 0 && moldura is FragmentBase) {
+            moldura.voltar()
         } else {
             finish()
         }
